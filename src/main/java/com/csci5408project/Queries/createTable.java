@@ -30,7 +30,7 @@ public class createTable {
         }
 
         // String createTable = "  Create table Players (student_id int,name string,column3 string);".toLowerCase();
-        String createTable = "  Create table Players_dd(student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
+        String createTable = "  Create table Players_dd3 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
 
         // System.out.println("Please enter query");
         String trimmedQuery = createTable.trim().replaceAll(" +", " ");
@@ -48,21 +48,39 @@ public class createTable {
         if(!matchFound){
             // return "error";
             System.out.println("ERROR OCCURED Query incorrect LINE 49");
+            System.exit(0);
         }
 
         final Pattern getTable = Pattern.compile("(?<=\\bcreate table\\s)(\\w+)");
         final Matcher getTableMatcher = getTable.matcher(trimmedQuery);
         boolean tableNameBoolean = getTableMatcher.find();
-        // System.out.println("tableNameBoolean: " + tableNameBoolean);
+//         System.out.println("tableNameBoolean: " + tableNameBoolean);
         // System.out.println("tableNameBoolean Group: " + getTableMatcher.group());
         String tableName = getTableMatcher.group();
+
+
+        File folder = new File("S:\\5408-project\\Temp-files\\" + "DB1");
+        File[] listOfFiles = folder.listFiles();
+
+        for (File selectedDatabase : listOfFiles) {
+            if (selectedDatabase.isFile()) {
+                System.out.println("fileName: "+selectedDatabase.getName());
+                if(selectedDatabase.getName().equals(tableName+".txt")){
+                    System.out.println("Error occurred table already exists.");
+                    System.exit(0);
+                }
+            }
+        }
+
 
         // regex for columns
         final Pattern compileColumns = Pattern.compile("(\\w+\\s(string|int),)*(\\w+\\s(string|int))");
         final Matcher getColumns = compileColumns.matcher(trimmedQuery);
         boolean matchFound2 = getColumns.find();
         if(!matchFound2){
-            // System.out.println("ERROR OCCURED Query incorrect LINE 64");
+             System.out.println("ERROR OCCURED Query incorrect LINE 64");
+            System.exit(0);
+//            return "error";
         }
 
         String columns = getColumns.group();
@@ -101,6 +119,7 @@ public class createTable {
         if(!flagPrimaryKey){
             // return "error";
             System.out.println("ERROR OCCURED PLEASE ENTER CORRECT PRIMARY KEY");
+            System.exit(0);
         }
 
         // Create string to write to file
@@ -115,7 +134,7 @@ public class createTable {
         System.out.println("metaDataPK: " + metaDataPK);
 
         try {
-            PrintWriter writer = new PrintWriter(tableName+".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("S:\\5408-project\\Temp-files\\DB1\\"+tableName+".txt", "UTF-8");
             writer.println(colHeaders);
             writer.println(colHeadersDatatype);
             writer.println(metaDataPK);
