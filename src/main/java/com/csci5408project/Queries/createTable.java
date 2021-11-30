@@ -13,8 +13,54 @@ public class createTable {
 
     public static void main(String[] args){
         createTable cT =  new createTable();
-
         File file = new File("S:\\5408-project\\Temp-files");
+
+        String useDatabase = "  use players2s;".toLowerCase();
+
+
+        // System.out.println("Please enter query");
+
+
+//        String useDBQuery = useDatabase.trim().replaceAll("\\S+", " ");
+        String useDBQuery = useDatabase.trim().replaceAll(" +", " ");
+        final Pattern useDBCompile = Pattern.compile("use (\\w+);");
+
+
+         System.out.println("useDBQuery : " +useDBQuery);
+         System.out.println("useDatabase : " +useDatabase);
+
+        final Matcher useMatcher = useDBCompile.matcher(useDBQuery);
+        boolean databaseMatchFound = useMatcher.find();
+
+        System.out.println("matchFound: " +databaseMatchFound );
+        if(!databaseMatchFound){
+            // return "error";
+            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.exit(0);
+        }
+
+
+        final Pattern getDatabase = Pattern.compile("(?<=\\buse\\s)(\\w+)");
+        final Matcher getDatabaseMatcher = getDatabase.matcher(useDBQuery);
+        boolean DatabaseNameBoolean = getDatabaseMatcher.find();
+
+
+        System.out.println("DatabaseNameBoolean: " + DatabaseNameBoolean);
+        // System.out.println("DatabaseNameBoolean Group: " + getDatabaseMatcher.group());
+
+
+        String databaseName = "";
+        if(DatabaseNameBoolean){
+            databaseName = getDatabaseMatcher.group();
+        }else{
+            // return "error";
+            System.out.println("Syntax error Line 62");
+            System.exit(0);
+        }
+        System.out.println("databaseName: " + databaseName);
+//        System.exit(0);
+
+
 
         String[] databases = file.list(new FilenameFilter() {
             @Override
@@ -23,12 +69,21 @@ public class createTable {
             }
         });
         System.out.println(Arrays.toString(databases));
-
+        String useDatabaseName = "";
+        boolean foundDatabase = false;
         for (int i = 0; i < databases.length; i++) {
             // Get all databases i.e. folders
-            // System.out.println(databases[i]);
+             System.out.println("databaseName.equals(databases[i]): "+databaseName.equals(databases[i]));
+            if(databaseName.equals(databases[i])){
+                useDatabaseName = databaseName;
+                foundDatabase = true;
+            }
         }
-
+        if(!foundDatabase){
+            System.out.println("NO Database found with this name");
+            System.exit(0);
+        }
+        System.exit(0);
         // String createTable = "  Create table Players (student_id int,name string,column3 string);".toLowerCase();
         String createTable = "  Create table Players_dd3 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
 

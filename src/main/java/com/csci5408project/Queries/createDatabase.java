@@ -40,7 +40,8 @@ public class createDatabase {
         System.out.println("matchFound: " +matchFound );
         if(!matchFound){
             // return "error";
-            System.out.println("ERROR OCCURED Query incorrect LINE 49");
+            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.exit(0);
         }
 
         // TO get database NAME
@@ -58,14 +59,16 @@ public class createDatabase {
             databaseName = getDatabaseMatcher.group();
         }else{
             // return "error";
-            System.out.println("Syntax error");
+            System.out.println("Syntax error Line 62");
+            System.exit(0);
         }
 
 
         for(int i = 0; i < databases.length; i++){
             if(databases[i].toLowerCase().equals(databaseName)){
                 // return "error";
-                System.out.println("ERROR Database exist: LINE 56");
+                System.out.println("ERROR Database exist: LINE 70");
+                System.exit(0);
             }
         }
 
