@@ -112,7 +112,7 @@ public class createTable {
             // return "error";
 
             System.out.println("ERROR OCCURED PLEASE ENTER CORRECT PRIMARY KEY");
-//            return false;
+            return false;
         }
 
         //            variables tableName, parsedPrimaryKey, list -columnNames,columnDataTypes
@@ -129,18 +129,18 @@ public class createTable {
             colHeaders+= "<~" + columnNames.get(i) + "~>";
             colHeadersDatatype += "<~" + columnDataTypes.get(i) + "~>";
         }
-        System.out.println("colHeaders: " + colHeaders);
-        System.out.println("colHeadersDatatype: " + colHeadersDatatype);
-        System.out.println("metaDataPK: " + primaryKey);
+        String table = "<~tablename~>" + tableName;
 
         try {
             PrintWriter writer = new PrintWriter("S:\\5408-project\\Temp-files\\DB1\\"+tableName+".txt", "UTF-8");
+            writer.println(table);
             writer.println(colHeaders);
             writer.println(colHeadersDatatype);
             if(primaryKeyExist){
                 String metaDataPK = "<~metadata~>primarykey=" + primaryKey;
                 writer.println(metaDataPK);
             }
+            System.out.println("Table successfully created");
             writer.close();
         } catch ( IOException e ) {
             e.printStackTrace();
