@@ -1,5 +1,6 @@
 package com.csci5408project.Queries;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -31,14 +32,8 @@ public class createTable {
 //        String createTable = "  Create table Players_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
         String createTable = query.toLowerCase();
 
-        // System.out.println("Please enter query");
         String trimmedQuery = createTable.trim().replaceAll(" +", " ");
-//        System.out.println("cT:" +createTable.trim().replaceAll(" +", " "));
 
-
-        // final Pattern compile = Pattern.compile("create table .* \\((\\w+\s(string|int),)*(\\w+\s(string|int))\\);");
-        // final Pattern compile = Pattern.compile("create table .* \\((\\w+\s(string|int),)*(\\w+\s(string|int))((,)PRIMARY KEY \\w+|)\\);");
-//        final Pattern compile = Pattern.compile("create table \\w+(| )\\((\\w+\\s(string|int),)*(\\w+\\s(string|int))((,)primary key \\w+|)\\);");
         final Pattern compile = Pattern.compile("create table \\w+( *)\\((\\w+\\s(string|int),( *))*(\\w+\\s(string|int))((,)( *)primary key \\w+|)\\);");
 
         final Matcher matcher = compile.matcher(trimmedQuery);
@@ -46,9 +41,7 @@ public class createTable {
         System.out.println("matchFound: " +matchFound );
         System.out.println("matchFound: " +matchFound );
         if(!matchFound){
-            // return "error";
-//            System.out.println("ERROR OCCURRED Query incorrect LINE 49");
-//            System.exit(0);
+            System.out.println("ERROR OCCURRED Query incorrect LINE 49");
             return false;
         }
 
@@ -57,31 +50,26 @@ public class createTable {
         boolean tableNameBoolean = getTableMatcher.find();
         String tableName = getTableMatcher.group();
         String getColumnsString = trimmedQuery.trim().replaceAll(",( *)", ",");
-        System.out.println("getColumsString: "+getColumnsString);
         final Pattern compileColumns = Pattern.compile("(\\w+\\s(string|int),)*(( *)\\w+\\s(string|int))");
         final Matcher getColumns = compileColumns.matcher(getColumnsString);
         boolean matchFound2 = getColumns.find();
         if(!matchFound2){
-            // System.out.println("ERROR OCCURED Query incorrect LINE 64");
+             System.out.println("An error occurred");
             return false;
         }
 
         String columns = getColumns.group();
 
-        // get all columns and their datatypes
         String[] columnStrings = columns.split(",");
         List<String> columnNames = new ArrayList<>();
         List<String> columnDataTypes = new ArrayList<>();
-        for (int i = 0;  i < columnStrings.length; i++){
-            System.out.println("columnStrings: "+columnStrings[i]);
-        }
+
         for(int i = 0; i < columnStrings.length;i++){
             String temp = columnStrings[i].trim();
             String[] columnValues = temp.split(" ");
             columnNames.add(columnValues[0]);
             columnDataTypes.add(columnValues[1]);
         }
-
 
         boolean flagPrimaryKey = false;
         String parsedPrimaryKey = "student_id";
@@ -92,13 +80,34 @@ public class createTable {
         boolean primaryKeyExist = getPrimaryKey.find();
 
         String primaryKey = "";
+
+        File folder = new File("S:\\5408-project\\Temp-files\\DB1\\");
+        File[] listOfFiles = folder.listFiles();
+        boolean flagFileExist = false;
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+
+                if(file.getName().equals(tableName+".txt")){
+                    System.out.println("table: "+tableName);
+                    System.out.println("Table Name exist: "+file.getName());
+                    flagFileExist = true;
+                    break;
+                }
+            }
+        }
+        System.out.println("flagFileExist: "+flagFileExist);
+        if(flagFileExist){
+            System.out.println("Table already exist");
+            return false;
+        }
+
+
         if(primaryKeyExist){
             primaryKey = getPrimaryKey.group();
         } else{
             writeToFile(tableName,false,"",columnNames,columnDataTypes);
             return true;
         }
-
 
         parsedPrimaryKey = primaryKey;
         for (int i = 0; i < columnNames.size(); i++) {
@@ -107,13 +116,10 @@ public class createTable {
             }
         }
         if(!flagPrimaryKey){
-            // return "error";
-
-            System.out.println("ERROR OCCURED PLEASE ENTER CORRECT PRIMARY KEY");
+            System.out.println("ERROR OCCURRED PLEASE ENTER CORRECT PRIMARY KEY");
             return false;
         }
 
-        //            variables tableName, parsedPrimaryKey, list -columnNames,columnDataTypes
         writeToFile(tableName,primaryKeyExist,parsedPrimaryKey,columnNames,columnDataTypes);
         return true;
 
