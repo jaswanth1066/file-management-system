@@ -1,12 +1,55 @@
 package com.csci5408project.Queries;
+
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class createDatabase {
-    public static void main(String[] args){
-        System.out.println("LINE 14");
+    public static void main(String[] args) throws IOException {
+        createDatabaseQuery();
+    }
+    public static void createDatabaseQuery() throws IOException {
+        Scanner sc = new Scanner(System.in);
+        int exitFlag = 0;
+        while (exitFlag == 0) {
+            System.out.println("Enter query");
+            String query = sc.nextLine();
+            if (parseDatabaseQuery(query) == true) {
+                exitFlag = 1;
+            }
+
+        }
+    }
+
+    public static boolean parseDatabaseQuery(String query) throws IOException {
+        String createDatabase = query.toLowerCase();
+        String trimmedQuery = createDatabase.trim().replaceAll(" +", " ");
+        final Pattern compile = Pattern.compile("create database (\\w+);");
+
+        final Matcher matcher = compile.matcher(trimmedQuery);
+        boolean matchFound = matcher.find();
+
+        System.out.println("matchFound: " +matchFound );
+        if(!matchFound){
+            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            return false;
+        }
+
+        // TO get database NAME
+        final Pattern getDatabase = Pattern.compile("(?<=\\bcreate database\\s)(\\w+)");
+        final Matcher getDatabaseMatcher = getDatabase.matcher(trimmedQuery);
+        boolean DatabaseNameBoolean = getDatabaseMatcher.find();
+
+        String databaseName = "";
+        if(DatabaseNameBoolean){
+            databaseName = getDatabaseMatcher.group();
+        }else{
+            System.out.println("Syntax error Line 62");
+            return false;
+        }
 
 
         File file = new File("S:\\5408-project\\Temp-files");
@@ -18,66 +61,22 @@ public class createDatabase {
             }
         });
 
-
-        // System.out.println(Arrays.toString(databases));
-
-
-        String createDatabase = "  Create database players2;".toLowerCase();
-
-
-        // System.out.println("Please enter query");
-
-
-        String trimmedQuery = createDatabase.trim().replaceAll("\\S+", " ");
-        final Pattern compile = Pattern.compile("create database (\\w+);");
-
-
-        // System.out.println("cT:" +createDatabase.trim().replaceAll(" +", " "));
-
-        final Matcher matcher = compile.matcher(trimmedQuery);
-        boolean matchFound = matcher.find();
-
-        System.out.println("matchFound: " +matchFound );
-        if(!matchFound){
-            // return "error";
-            System.out.println("ERROR OCCURED Query incorrect LINE 43");
-            System.exit(0);
-        }
-
-        // TO get database NAME
-        final Pattern getDatabase = Pattern.compile("(?<=\\bcreate database\\s)(\\w+)");
-        final Matcher getDatabaseMatcher = getDatabase.matcher(trimmedQuery);
-        boolean DatabaseNameBoolean = getDatabaseMatcher.find();
-
-
-        System.out.println("DatabaseNameBoolean: " + DatabaseNameBoolean);
-        // System.out.println("DatabaseNameBoolean Group: " + getDatabaseMatcher.group());
-
-
-        String databaseName = "";
-        if(DatabaseNameBoolean){
-            databaseName = getDatabaseMatcher.group();
-        }else{
-            // return "error";
-            System.out.println("Syntax error Line 62");
-            System.exit(0);
-        }
-
-
         for(int i = 0; i < databases.length; i++){
             if(databases[i].toLowerCase().equals(databaseName)){
-                // return "error";
                 System.out.println("ERROR Database exist: LINE 70");
-                System.exit(0);
+                return false;
             }
         }
 
-        // create folder with database name
-
         boolean file2 = new File("S:\\5408-project\\Temp-files\\"+databaseName).mkdirs();
 
+        if(file2){
+            System.out.println("Database created");
+            return true;
+        }else{
+            System.out.println("Problem creating Database");
+            return false;
+        }
 
-        System.out.println("file2: "+file2);
     }
-
 }

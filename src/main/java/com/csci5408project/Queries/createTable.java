@@ -20,7 +20,7 @@ public class createTable {
             System.out.println("Enter query");
             String query = sc.nextLine();
             if (parseTableQuery(query) == true) {
-                exitFlag = 0;
+                exitFlag = 1;
             }
 
         }
@@ -56,12 +56,10 @@ public class createTable {
         final Matcher getTableMatcher = getTable.matcher(trimmedQuery);
         boolean tableNameBoolean = getTableMatcher.find();
         String tableName = getTableMatcher.group();
-
-
-
-
+        String getColumnsString = trimmedQuery.trim().replaceAll(",( *)", ",");
+        System.out.println("getColumsString: "+getColumnsString);
         final Pattern compileColumns = Pattern.compile("(\\w+\\s(string|int),)*(( *)\\w+\\s(string|int))");
-        final Matcher getColumns = compileColumns.matcher(trimmedQuery);
+        final Matcher getColumns = compileColumns.matcher(getColumnsString);
         boolean matchFound2 = getColumns.find();
         if(!matchFound2){
             // System.out.println("ERROR OCCURED Query incorrect LINE 64");
