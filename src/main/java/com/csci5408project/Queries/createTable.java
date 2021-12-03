@@ -95,7 +95,7 @@ public class createTable {
                 }
             }
         }
-        System.out.println("flagFileExist: "+flagFileExist);
+
         if(flagFileExist){
             System.out.println("Table already exist");
             return false;
@@ -130,13 +130,13 @@ public class createTable {
         String colHeaders = "";
         String colHeadersDatatype = "";
         for (int i = 0; i < columnNames.size(); i++) {
-            colHeaders+= "<~" + columnNames.get(i) + "~>";
-            colHeadersDatatype += "<~" + columnDataTypes.get(i) + "~>";
+            colHeaders+= "<~colheader~>" + columnNames.get(i);
+            colHeadersDatatype += "<~coldatatype~>" + columnDataTypes.get(i);
         }
         String table = "<~tablename~>" + tableName;
 
         try {
-            PrintWriter writer = new PrintWriter("S:\\5408-project\\Temp-files\\DB1\\"+tableName+".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("bin/Databases/TestDatabase/"+ tableName+".txt", "UTF-8");
             writer.println(table);
             writer.println(colHeaders);
             writer.println(colHeadersDatatype);
