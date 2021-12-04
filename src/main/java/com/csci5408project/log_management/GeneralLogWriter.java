@@ -47,8 +47,8 @@ public class GeneralLogWriter {
 			sb.append("<").append(Session.getInstance().getLoggedInUser().getUserName()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
 			sb.append("<").append("Time taken for query to extecute is : ")
-					.append(information.get(LogWriterService.QUERY_EXECUTION_TIME_KEY)).append(". Database state is: ")
-					.append(information.get(LogWriterService.DATABASE_STATE_KEY)).append(">");
+					.append(information.get(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY)).append(". Database state is: ")
+					.append(information.get(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY)).append(">");
 			this.bufferedWriter.newLine();
 			this.bufferedWriter.append(sb.toString());
 			this.bufferedWriter.flush();

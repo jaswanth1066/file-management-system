@@ -46,7 +46,7 @@ public class QueryLogWriter {
 			sb.append("<").append(calendar.getTime()).append(">-");
 			sb.append("<").append(Session.getInstance().getLoggedInUser().getUserName()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
-			sb.append("<").append("Executed Query is : ").append(informationMap.get(LogWriterService.EXECUTED_QUERY_KEY)).append(">");
+			sb.append("<").append("Executed Query is : ").append(informationMap.get(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY)).append(">");
 			this.bufferedWriter.newLine();
 			this.bufferedWriter.append(sb.toString());
 			this.bufferedWriter.flush();

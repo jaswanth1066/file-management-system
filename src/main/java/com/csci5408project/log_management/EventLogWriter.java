@@ -47,14 +47,14 @@ public class EventLogWriter {
 			sb.append("<").append(Session.getInstance().getLoggedInUser().getUserName()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
 			sb.append("<");
-			if(informationMap.containsKey(LogWriterService.DATABASE_CHANGES_KEY)) {
-				sb.append("The changes made to database are : ").append(informationMap.get(LogWriterService.DATABASE_CHANGES_KEY));
+			if(informationMap.containsKey(LogWriterService.EVENT_LOG_DATABASE_CHANGES_KEY)) {
+				sb.append("The changes made to database are : ").append(informationMap.get(LogWriterService.EVENT_LOG_DATABASE_CHANGES_KEY));
 			}
-			if(informationMap.containsKey(LogWriterService.TRANSACTIONS_KEY)) {
-				sb.append("The running concurrent transactions are : ").append(informationMap.get(LogWriterService.TRANSACTIONS_KEY));
+			if(informationMap.containsKey(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY)) {
+				sb.append("The running concurrent transactions are : ").append(informationMap.get(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY));
 			}
-			if(informationMap.containsKey(LogWriterService.DATABASE_CRASH_KEY)) {
-				sb.append("There has been an database crash due to: ").append(informationMap.get(LogWriterService.DATABASE_CRASH_KEY));
+			if(informationMap.containsKey(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY)) {
+				sb.append("There has been an database crash due to: ").append(informationMap.get(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY));
 			}
 			sb.append(">");
 			this.bufferedWriter.newLine();

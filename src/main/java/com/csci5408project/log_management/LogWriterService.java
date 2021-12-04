@@ -3,15 +3,18 @@ package com.csci5408project.log_management;
 import java.util.Map;
 
 public class LogWriterService {
-
-	public static final String QUERY_EXECUTION_TIME_KEY = "QUERY_EXECUTION_TIME";
-	public static final String DATABASE_STATE_KEY = "DATABASE_KEY";
-
-	public static final String EXECUTED_QUERY_KEY = "EXECUTED_QUERY";
-
-	public static final String DATABASE_CHANGES_KEY = "DATABASE_CHANGES";
-	public static final String TRANSACTIONS_KEY = "TRANSACTIONS";
-	public static final String DATABASE_CRASH_KEY = "DATABASE_CRASH";
+	
+	// GENERAL LOGS
+	public static final String GENRAL_LOG_QUERY_EXECUTION_TIME_KEY = "QUERY_EXECUTION_TIME";
+	public static final String GENRAL_LOG_DATABASE_STATE_KEY = "DATABASE_KEY";
+	
+	//QUERY LOGS
+	public static final String QUERY_LOG_EXECUTED_QUERY_KEY = "EXECUTED_QUERY";
+	
+	//EVENT LOGS
+	public static final String EVENT_LOG_DATABASE_CHANGES_KEY = "DATABASE_CHANGES";
+	public static final String EVENT_LOG_TRANSACTIONS_KEY = "TRANSACTIONS";
+	public static final String EVENT_LOG_DATABASE_CRASH_KEY = "DATABASE_CRASH";
 
 	private static LogWriterService instance = null;
 
@@ -33,17 +36,17 @@ public class LogWriterService {
 	}
 
 	public void write(Map<String, String> informationMap) {
-		if (informationMap.containsKey(QUERY_EXECUTION_TIME_KEY) && informationMap.containsKey(DATABASE_STATE_KEY)) {
+		if (informationMap.containsKey(GENRAL_LOG_QUERY_EXECUTION_TIME_KEY) && informationMap.containsKey(GENRAL_LOG_DATABASE_STATE_KEY)) {
 			GeneralLogWriter.getInstance().writeGeneralLog(informationMap);
 		}
-		if (informationMap.containsKey(EXECUTED_QUERY_KEY)) {
+		if (informationMap.containsKey(QUERY_LOG_EXECUTED_QUERY_KEY)) {
 			QueryLogWriter.getInstance().writeQueryLog(informationMap);
 		}
-		if (informationMap.containsKey(DATABASE_CHANGES_KEY) || informationMap.containsKey(TRANSACTIONS_KEY)
-				|| informationMap.containsKey(DATABASE_CRASH_KEY)) {
+		if (informationMap.containsKey(EVENT_LOG_DATABASE_CHANGES_KEY) || informationMap.containsKey(EVENT_LOG_TRANSACTIONS_KEY)
+				|| informationMap.containsKey(EVENT_LOG_DATABASE_CRASH_KEY)) {
 			EventLogWriter.getInstance().writeEventLog(informationMap);
 		}
-
+		//LogWriterService.getInstance().write(informationMap);
 	}
 	
 	public void stop() {
