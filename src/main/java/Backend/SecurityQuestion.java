@@ -16,10 +16,10 @@ public final class SecurityQuestion {
 
     private void initSecurityQuestionsMap() {
         securityQuestionsMap.clear();
-        securityQuestionsMap.put(10, "What is your mom's maiden name?");
-        securityQuestionsMap.put(11, "What is your birth year?");
-        securityQuestionsMap.put(12, "What is your favourite movie?");
-        securityQuestionsMap.put(13, "What is the name of your first girlfriend?");
+        securityQuestionsMap.put(4, "What is your mom's maiden name?");
+        securityQuestionsMap.put(5, "What is your birth year?");
+        securityQuestionsMap.put(6, "What is your favourite movie?");
+        securityQuestionsMap.put(7, "What is the name of your first girlfriend?");
     }
 
     public static SecurityQuestion getInstance() {
@@ -43,8 +43,8 @@ public final class SecurityQuestion {
     }
 
     public String getRandomSecurityQuestion() {
-        final int min = 10;
-        final int max = 13;
+        final int min = 4;
+        final int max = 7;
         final int randomQuestionIndex = new Random().nextInt(max - min + 1) + min;
         return securityQuestionsMap.get(randomQuestionIndex);
     }
