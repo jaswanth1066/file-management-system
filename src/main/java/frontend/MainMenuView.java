@@ -7,15 +7,12 @@ public final class MainMenuView {
     private final MainPrinter printer;
     private final Scanner scanner;
     private final Session userSession;
-    public SettingDB settingDB;
     public MainMenuView(final MainPrinter printer,
                         final Scanner scanner,
-                        final Session userSession,
-                        SettingDB settingDB) {
+                        final Session userSession) {
         this.printer = printer;
         this.scanner = scanner;
         this.userSession = userSession;
-        this.settingDB = settingDB;
     }
 
     public void displayMainMenu() {

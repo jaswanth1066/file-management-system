@@ -1,20 +1,14 @@
 package com.csci5408project.Queries;
 
-import frontend.Session;
-import frontend.SettingDB;
+import Backend.SetDatabase;
+
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import Backend.BackendSelectedDatabase;
-import Backend.SelectedDB;
 
 public class useDatabase {
 
-    final SettingDB settingDB = SettingDB.getInstance();
-
-//    final Session userSession = Session.getInstance();
-//    selectedDB.setSelectedDB(selectedDB);
     public static void main(String[] args) throws IOException {
         useDatabaseQuery();
     }
@@ -59,10 +53,14 @@ public class useDatabase {
             return false;
         }
         System.out.println("databaseName: " + databaseName);
-        final SelectedDB selectedDB = new SelectedDB(databaseName);
-        settingDB.setDatabaseForUse(selectedDB);
-//        userSession.createUserSession(user)
+        SetDatabase setDatabase = new SetDatabase();
+        setDatabase.setDb(databaseName);
+
+        System.out.println("setDatabase.getDb();: "+setDatabase.getDb());
 
         return true;
     }
+
+
+
 }

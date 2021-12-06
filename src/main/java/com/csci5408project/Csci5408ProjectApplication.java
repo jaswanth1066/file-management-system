@@ -1,6 +1,5 @@
 package com.csci5408project;
 //Author: @Smit_Thakkar
-import frontend.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
@@ -8,6 +7,11 @@ import java.util.Scanner;
 
 
 import Backend.User;
+import frontend.MainPrinter;
+import frontend.Session;
+import frontend.UserLoginView;
+import frontend.UserRegistrationView;
+import frontend.MainMenuView;
 
 @SpringBootApplication
 public class Csci5408ProjectApplication {
@@ -82,7 +86,6 @@ public class Csci5408ProjectApplication {
 		final MainPrinter printer = MainPrinter.getInstance();
 		final Scanner scanner = new Scanner(System.in);
 		final Session userSession = Session.getInstance();
-		SettingDB settingDB = SettingDB.getInstance();
 		entry.folderStructureSetup(printer);
 
 		printer.printScreenTitle("Welcome to CSCI5408 Project");
@@ -102,7 +105,7 @@ public class Csci5408ProjectApplication {
 					final User user = entry.userLogin(printer, scanner);
 					if (user != null) {
 						userSession.createUserSession(user);
-						final MainMenuView mainMenuView = new MainMenuView(printer, scanner, userSession, settingDB);
+						final MainMenuView mainMenuView = new MainMenuView(printer, scanner, userSession);
 						mainMenuView.displayMainMenu();
 					}
 					break;
