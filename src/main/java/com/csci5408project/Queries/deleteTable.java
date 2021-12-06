@@ -53,7 +53,7 @@ public class deleteTable {
 
         System.out.println("tableName: "+tableName);
 
-        File folder = new File("S:\\5408-project\\Temp-files\\DB1\\");
+        File folder = new File("bin/Databases/TestDatabase/");
         File[] listOfFiles = folder.listFiles();
         boolean flagFileExist = false;
         for (File file : listOfFiles) {
@@ -70,7 +70,7 @@ public class deleteTable {
         }
 
         try {
-            File file= new File("S:\\5408-project\\Temp-files\\DB1\\"+tableName+".txt");
+            File file= new File("bin/Databases/TestDatabase/"+tableName+".txt");
             if(file.delete()){
                 System.out.println("File deleted");
                 return true;

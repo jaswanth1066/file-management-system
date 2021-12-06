@@ -32,9 +32,8 @@ public class createDatabase {
         final Matcher matcher = compile.matcher(trimmedQuery);
         boolean matchFound = matcher.find();
 
-        System.out.println("matchFound: " +matchFound );
         if(!matchFound){
-            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.out.println("Error occurred query incorrect");
             return false;
         }
 
@@ -47,12 +46,12 @@ public class createDatabase {
         if(DatabaseNameBoolean){
             databaseName = getDatabaseMatcher.group();
         }else{
-            System.out.println("Syntax error Line 62");
+            System.out.println("Error occurred query incorrect");
             return false;
         }
 
 
-        File file = new File("S:\\5408-project\\Temp-files");
+        File file = new File("bin/Databases");
 
         String[] databases = file.list(new FilenameFilter() {
             @Override
@@ -63,12 +62,12 @@ public class createDatabase {
 
         for(int i = 0; i < databases.length; i++){
             if(databases[i].toLowerCase().equals(databaseName)){
-                System.out.println("ERROR Database exist: LINE 70");
+                System.out.println("Error occurred Database exist");
                 return false;
             }
         }
 
-        boolean file2 = new File("S:\\5408-project\\Temp-files\\"+databaseName).mkdirs();
+        boolean file2 = new File("bin/Databases/"+databaseName).mkdirs();
 
         if(file2){
             System.out.println("Database created");
