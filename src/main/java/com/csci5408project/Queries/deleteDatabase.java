@@ -36,7 +36,7 @@ public class deleteDatabase {
         boolean matchFound = matcher.find();
 
         if(!matchFound){
-            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.out.println("Error occurred query incorrect");
             return false;
         }
 
@@ -48,12 +48,12 @@ public class deleteDatabase {
         if(DBNameBoolean){
             databaseName = getDatabaseMatcher.group();
         }else{
-            System.out.println("Syntax error Line 62");
+            System.out.println("Error occurred query incorrect");
             return false;
         }
 
 
-        File file = new File("S:\\5408-project\\Temp-files");
+        File file = new File("bin/Databases/");
         String[] databases = file.list(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
@@ -68,10 +68,10 @@ public class deleteDatabase {
             }
         }
         if(!flagFolderExist){
-            System.out.println("Database does not exist. ");
+            System.out.println("Error occurred. Database does not exist.");
             return false;
         }
-        File databaseFolder = new File("S:\\5408-project\\Temp-files\\" +databaseName);
+        File databaseFolder = new File("bin/Databases/" +databaseName);
         try {
             dropDatabase(databaseFolder);
         } catch (IOException e) {

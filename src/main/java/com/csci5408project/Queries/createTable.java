@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class createTable {
+
     public static void main(String[] args) throws IOException {
         createTableQuery();
     }

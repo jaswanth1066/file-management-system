@@ -1,14 +1,14 @@
 package com.csci5408project.Queries;
 
-import frontend.SelectedDatabase;
+import Backend.SetDatabase;
+
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class useDatabase {
-    final SelectedDatabase selectedDB = SelectedDatabase.getInstance();
-//    selectedDB.setSelectedDB(selectedDB);
+
     public static void main(String[] args) throws IOException {
         useDatabaseQuery();
     }
@@ -53,6 +53,14 @@ public class useDatabase {
             return false;
         }
         System.out.println("databaseName: " + databaseName);
+        SetDatabase setDatabase = new SetDatabase();
+        setDatabase.setDb(databaseName);
+
+        System.out.println("setDatabase.getDb();: "+setDatabase.getDb());
+
         return true;
     }
+
+
+
 }

@@ -7,7 +7,6 @@ public final class MainMenuView {
     private final MainPrinter printer;
     private final Scanner scanner;
     private final Session userSession;
-
     public MainMenuView(final MainPrinter printer,
                         final Scanner scanner,
                         final Session userSession) {
