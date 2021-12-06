@@ -3,26 +3,29 @@ package frontend;
 import Backend.SelectedDB;
 import Backend.User;
 
-public class SelectedDatabase {
+
+public final class SettingDB {
 
     private SelectedDB selectedDB = null;
-    private static SelectedDatabase instance = null;
-    private SelectedDatabase() {
+    private static SettingDB instance = null;
+    private SettingDB() {
         // Required empty constructor.
     }
 
-    public static SelectedDatabase getInstance() {
+    public static SettingDB getInstance() {
         if (instance == null) {
-            instance = new SelectedDatabase();
+            instance = new SettingDB();
         }
         return instance;
     }
 
-    public void setSelectedDB(final SelectedDB selectedDB) {
+    public void setDatabaseForUse(final SelectedDB selectedDB) {
         this.selectedDB = selectedDB;
     }
 
     public SelectedDB getLoggedInUser() {
         return this.selectedDB;
     }
+
+
 }

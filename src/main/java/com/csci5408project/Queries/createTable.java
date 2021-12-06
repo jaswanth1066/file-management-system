@@ -1,5 +1,7 @@
 package com.csci5408project.Queries;
 
+import frontend.SettingDB;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class createTable {
+    public static SettingDB settingDB;
+    public createTable(SettingDB settingDB){
+        this.settingDB = settingDB;
+    }
     public static void main(String[] args) throws IOException {
+        System.out.println("selectedDatabase: "+ settingDB);
+//        selectedDatabase.setSelectedDB(selectedDatabase.setSelectedDB());
         createTableQuery();
     }
 
