@@ -10,7 +10,9 @@ import frontend.Session;
 
 public class EventLogWriter {
 
-	private String filePath = "/Users/jaswanth106/Desktop/GeneralLogs.txt";
+//	private String filePath = "/Users/jaswanth106/Desktop/GeneralLogs.txt";
+	private String filePath = "bin/Logs/EventsLogs.txt";
+
 
 	private File file;
 	private java.io.FileWriter fileWriter;
