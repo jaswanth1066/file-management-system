@@ -22,7 +22,6 @@ public class createTable {
             if (parseTableQuery(query) == true) {
                 exitFlag = 1;
             }
-
         }
     }
 
@@ -130,7 +129,7 @@ public class createTable {
         String table = "<~tablename~>" + tableName;
 
         try {
-            PrintWriter writer = new PrintWriter("S:\\5408-project\\Temp-files\\DB1\\"+tableName+".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("bin/Databases/TestDatabase/"+ tableName+".txt", "UTF-8");
             writer.println(table);
             writer.println(colHeaders);
             writer.println(colHeadersDatatype);

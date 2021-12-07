@@ -1,4 +1,4 @@
-package com.csci5408project.Queries;
+package transactions;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,43 +29,39 @@ public class insert {
 	//VALUES (value1, value2, value3, ...);
 	
 	//insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)
-	public static void main(String[] args) throws IOException {
-		int flag = 0;
-		while(flag == 0)
-		{
-		System.out.println("Enter Query : ");
-		Scanner sc = new Scanner(System.in);
-		
-		//query validation
-		
-		//query parsing
-		String query = sc.nextLine();
+	public static Map<Integer, String> insertTransaction(String query , Map<Integer, String> tempTransactionFile) throws IOException {
+
 		String[] queryArray = query.split(" ");
 		String tableName = queryArray[2];
 		if(checkFileExistence(tableName) == true) 
 			{
-				if(dataTypeValidation(query, tableName) == false)
+				if(dataTypeValidation(query, tableName , tempTransactionFile) == false)
 					{
 						System.out.println("Error : DataType validation failed");
-						continue;
 					}
-				int indexOfPK=getIndexOfPrimaryKey(tableName);
-				String primaryKey = getPrimaryKey(tableName);
-				List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK);
-				if(checkDuplicatePrimaryKey(primaryKeysData,query,primaryKey) == true) {
-					
-				}
-				else {
-					System.out.println("ERROR : No duplicate primary key");
-					insertData(tableName,query);
-				}
+				else
+					{
+					int indexOfPK=getIndexOfPrimaryKey(tableName  , tempTransactionFile);
+					String primaryKey = getPrimaryKey(tableName , tempTransactionFile);
+					List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK , tempTransactionFile);
+					if(checkDuplicatePrimaryKey(primaryKeysData,query,primaryKey) == true)
+					{
+						
+					}
+					else
+					{
+						System.out.println("No duplicate primary key");
+						tempTransactionFile = insertData(tableName,query,tempTransactionFile);
+					}
+					}
 			}
-		else {
+		else
+		{
 			System.out.println("ERROR : Table does not exists");
 		}
-		}
-		
+		return tempTransactionFile;
 	}
+		
 	
 	public static boolean checkFileExistence(String tableName) {
 		File tempFile = new File("bin/Databases/TestDatabase/"+tableName+".txt");
@@ -73,13 +69,14 @@ public class insert {
 		return exists;
 	}
 	
-	public static String getPrimaryKey(String tableName) throws IOException {
+	public static String getPrimaryKey(String tableName  , Map<Integer, String> transactionFile) throws IOException {
 		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
-	    String line;
+//	    String line;
 	    String primaryKey="";
-		    while ((line = br.readLine()) != null) 
+	    for (String line : transactionFile.values())
+//		    while ((line = br.readLine()) != null) 
 		    {
 		    	if(line.startsWith("<~metadata~>primarykey"))
 		    	{
@@ -89,14 +86,15 @@ public class insert {
 		    }
 		    return primaryKey;
 	}
-	public static Integer getIndexOfPrimaryKey(String tableName) throws IOException
+	public static Integer getIndexOfPrimaryKey(String tableName  , Map<Integer, String> transactionFile) throws IOException
 	{
 		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
-	    String line;
+	    //String line;
 	    String primaryKey="";
-		    while ((line = br.readLine()) != null) 
+	    for (String line : transactionFile.values())
+	//	    while ((line = br.readLine()) != null) 
 		    {
 		    	if(line.startsWith("<~metadata~>primarykey"))
 		    	{
@@ -111,13 +109,14 @@ public class insert {
 		return ColumnList.indexOf(primaryKey);
 	}
 
-	public static List<String> getAllPrimaryKeysData(String tableName,int indexOfPK) throws IOException
+	public static List<String> getAllPrimaryKeysData(String tableName,int indexOfPK, Map<Integer, String> transactionFile) throws IOException
 	{
 		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> primaryKeyData = new ArrayList<>();
-		String line;
-	    while ((line = br.readLine()) != null) 
+		//String line;
+	    for (String line : transactionFile.values())
+	//	    while ((line = br.readLine()) != null)
 	    {
 	    	if(line.startsWith("<~row~>"))
 	    	{
@@ -125,7 +124,7 @@ public class insert {
 	    	}
 	    }
 	    return primaryKeyData;
-	}
+	} 
 	
 	public static boolean checkDuplicatePrimaryKey(List<String> primaryKeysData , String query , String primaryKey)
 	{
@@ -165,7 +164,7 @@ public class insert {
         
 	}
 	
-	public static void insertData(String tableName, String query) throws IOException
+	public static Map<Integer, String> insertData(String tableName, String query, Map<Integer, String> transactionFile) throws IOException
 	{
         Pattern pattern = Pattern.compile("insert into\\s+(.*?)\\s+\\((.*?)\\)\\s+values\\s+\\((.*?)\\)");
         Matcher matcher = pattern.matcher(query);
@@ -189,8 +188,9 @@ public class insert {
 		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
-	    String line;
-	    while ((line = br.readLine()) != null) 
+	    //String line;
+	    for (String line : transactionFile.values())
+	//	    while ((line = br.readLine()) != null)
 	    {
 	    	if(line.startsWith("<~colheader~>"))
 	    	{
@@ -201,25 +201,32 @@ public class insert {
 	    
 	    String insertString = "";
 	    String newLine = System.getProperty("line.separator");
+	    int linenumber = 0;
+	    for (int line : transactionFile.keySet())
+	    {
+	    	linenumber = line;
+	    }
 	    for(int i=1;i<ColumnList.size();i++)
 	    {
 	    	insertString = insertString + "<~row~>"+columnRowsMap.get(ColumnList.get(i));
+	    	transactionFile.put(linenumber+1, insertString);
 	    }
-	    try(PrintWriter output = new PrintWriter(new FileWriter(tableLocation,true))) 
-	    {
-	    	output.write(newLine + insertString);
-	    } 
-	    catch (Exception e) {}
+//	    try(PrintWriter output = new PrintWriter(new FileWriter(tableLocation,true))) 
+//	    {
+//	    	output.write(newLine + insertString);
+//	    } 
+//	    catch (Exception e) {}
+	    return transactionFile;
 	}
 	
-	public static boolean dataTypeValidation(String query , String tableName) throws IOException
+	public static boolean dataTypeValidation(String query , String tableName , Map<Integer, String> transactionFile) throws IOException
 	{
 		int validationFlag = 0;
 		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> dataTypeList = new ArrayList<>();
 		List<String> tableColumns = new ArrayList<>();
-	    String line;
+	   // String line;
         Pattern pattern = Pattern.compile("insert into\\s+(.*?)\\s+\\((.*?)\\)\\s+values\\s+\\((.*?)\\)");
         Matcher matcher = pattern.matcher(query);
         matcher.find();
@@ -228,7 +235,8 @@ public class insert {
         List<String> querycolumnlist = Arrays.asList(queryColumnName);
         
         String[] values = matcher.group(3).split(",");
-	    while ((line = br.readLine()) != null) 
+        for (String line : transactionFile.values())
+//	    while ((line = br.readLine()) != null) 
 	    {
 	    	if(line.startsWith("<~coldatatype~>"))
 	    	{
