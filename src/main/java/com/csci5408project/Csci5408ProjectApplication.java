@@ -25,6 +25,7 @@ public class Csci5408ProjectApplication {
 		final File sqlDumpsFolder = new File(outputFolder + "/sql_dumps");
 		final File databaseServerFolder = new File("./src/main/java/database/database_server");
 		final File databaseInMemoryFolder = new File("./src/main/java/database/database_in_memory");
+		System.out.println("XYZ");
 		if (!outputFolder.exists()) {
 			if (outputFolder.mkdirs()) {
 				printer.printContent(outputFolder.getName() + " directory created!");
@@ -116,5 +117,7 @@ public class Csci5408ProjectApplication {
 					break;
 			}
 		}
+
+
 	}
 }
