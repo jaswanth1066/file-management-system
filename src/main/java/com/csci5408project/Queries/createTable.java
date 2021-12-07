@@ -1,10 +1,9 @@
 package com.csci5408project.Queries;
 
+import com.csci5408project.log_management.LogWriterService;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,10 +28,10 @@ public class createTable {
 
     public static boolean parseTableQuery(String query) throws IOException {
 
-//        query = "  Create table 2Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
+//        query = "  Create table sa2Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
 //        query = "create table 3Playerssa_dd56(asfs int,adsfas int);";
-//        query = "create table 4Playerssa_dd56(asfs int,adsfas int,foreign key asfs references playersq2(asad));";
-//        query = "create table 5Playerssa_dd56(asf int,safdd int,primary key asf,foreign key asfsd references asf(as));";
+//        query = "create table Players2(student_id int,column2 int,primary key student_id,foreign key student_id references sa2Playerssa_dd56(name));";
+//        query = "create table 5Playerssa_dd56(asf int,safdd int,primary key asf,foreign key references sa2Playerssa_dd56(student_id));";
 //        query = "create table 6Playerssa_dd56(asad int,fasgr string,primary key asad,foreign key fasgr references playersq2(asad));";
         String createTable = query.toLowerCase();
 
@@ -176,9 +175,9 @@ public class createTable {
             primaryKey = getPrimaryKey.group();
         } else{
             if(foreignKeyExist){
-                writeToFile(tableName,false,"",columnNames,columnDataTypes,true,foreignKey);
+                writeToFile(tableName,false,"",columnNames,columnDataTypes,true,referenceColumn,referenceTableName,foreignKey);
             }else{
-                writeToFile(tableName,false,"",columnNames,columnDataTypes,false,"");
+                writeToFile(tableName,false,"",columnNames,columnDataTypes,false,"","","");
             }
             return true;
         }
@@ -205,13 +204,13 @@ public class createTable {
             }
         }
 
-        writeToFile(tableName,primaryKeyExist,parsedPrimaryKey,columnNames,columnDataTypes,flagForeignKey,foreignKey);
+        writeToFile(tableName,primaryKeyExist,parsedPrimaryKey,columnNames,columnDataTypes,flagForeignKey,referenceColumn,referenceTableName,foreignKey);
         return true;
 
     }
 
-    public static void writeToFile(String tableName, boolean primaryKeyExist, String primaryKey, List columnNames, List columnDataTypes,boolean foreignKeyExist,String foreignKey) {
-
+    public static void writeToFile(String tableName, boolean primaryKeyExist, String primaryKey, List columnNames, List columnDataTypes,boolean foreignKeyExist,String foreignKey,String referenceTableName, String currentTableColumn) {
+        LogWriterService logWriterService = LogWriterService.getInstance();
         String colHeaders = "";
         System.out.println("foreignKey: "+foreignKey);
         String colHeadersDatatype = "";
@@ -224,22 +223,28 @@ public class createTable {
         try {
             PrintWriter writer = new PrintWriter("bin/Databases/TestDatabase/"+ tableName+".txt", "UTF-8");
             writer.println(table);
-            writer.println(colHeaders);
-            writer.println(colHeadersDatatype);
+
             if(primaryKeyExist){
                 String metaDataPK = "<~metadata~>primarykey=" + primaryKey;
                 writer.println(metaDataPK);
             }
             if(foreignKeyExist){
-                String metaDataFK = "<~metadata~>foreignkey=" + foreignKey;
+                String metaDataFK = "<~metadata~>foreignkey=" + currentTableColumn +"<~metadata~>tablename=" + referenceTableName+"<~metadata~>tablecolumnname="+foreignKey;
+//                String metaDataFKTableName = "<~metadata~>foreignkeyTableName=" + referenceTableName;
                 writer.println(metaDataFK);
+//                writer.println(metaDataFKTableName);
             }
             System.out.println("Table successfully created");
+            writer.println(colHeaders);
+            writer.println(colHeadersDatatype);
             writer.close();
+
         } catch ( IOException e ) {
             e.printStackTrace();
         }
-
+        HashMap<String,String> createTableQuery = new HashMap<>();
+        createTableQuery.put("QUERY_EXECUTION_TIME","5s");
+        logWriterService.write(createTableQuery);
     }
 
 
