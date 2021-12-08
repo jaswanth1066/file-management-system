@@ -53,10 +53,10 @@ public class useDatabase {
             return false;
         }
         System.out.println("databaseName: " + databaseName);
-        SetDatabase setDatabase = new SetDatabase();
-        setDatabase.setDb(databaseName);
+        SetDatabase.getInstance().setDb(databaseName);
 
-        System.out.println("setDatabase.getDb();: "+setDatabase.getDb());
+
+        System.out.println("setDatabase.getDb();: "+SetDatabase.getInstance().getDb());
 
         return true;
     }
