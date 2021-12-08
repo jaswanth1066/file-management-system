@@ -90,19 +90,22 @@ public final class MainMenuView {
 						com.csci5408project.Queries.delete delete = new com.csci5408project.Queries.delete();
 						delete.deleteQuery(newQuery, databaseName, userName);
 					}
-					if(queryType.equalsIgnoreCase("droptable")){
+					if(queryType.equalsIgnoreCase("DROP_TABLE")){
+						System.out.println("Executing drop table");
 						deleteTable deleteTable = new deleteTable();
 						deleteTable.deleteTableQuery(newQuery,databaseName);
+
 					}
-					if(queryType.equalsIgnoreCase("dropdatabase")){
+					if(queryType.equalsIgnoreCase("DROP_DATABASE")){
+						System.out.println("Executing drop database");
 						deleteDatabase deleteDatabase = new deleteDatabase();
 						deleteDatabase.deleteDatabaseQuery(newQuery,databaseName);
 					}
-					if(queryType.equalsIgnoreCase("createdatabase")){
+					if(queryType.equalsIgnoreCase("CREATE_DATABASE")){
 						createDatabase createDatabase = new createDatabase();
 						createDatabase.createDatabaseQuery(newQuery,databaseName);
 					}
-					if(queryType.equalsIgnoreCase("createTable")){
+					if(queryType.equalsIgnoreCase("CREATE_TABLE")){
 						createTable createTable = new createTable();
 						createTable.createTableQuery(newQuery,databaseName);
 					}

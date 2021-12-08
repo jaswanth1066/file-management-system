@@ -19,10 +19,13 @@ public class IdentifyQuery {
 			return "CREATE_TABLE";
 		}else if(query.startsWith("drop table")) {
 			return "DROP_TABLE";
-		}else if(query.startsWith("use database")) {
+		}else if(query.startsWith("drop database")){
+			return "DROP_DATABASE";
+		}
+		else if(query.startsWith("use database")) {
 			return "USE_DATABASE";
 		}
-		return null;
+		return "";
 	}
 }
 

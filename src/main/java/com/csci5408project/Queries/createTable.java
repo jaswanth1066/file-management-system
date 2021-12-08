@@ -9,9 +9,6 @@ import java.util.regex.Pattern;
 
 public class createTable {
 
-//    public static void main(String[] args) throws IOException {
-//        createTableQuery();
-//    }
     private static Map<String, String> informationMap = new HashMap<>();
 
     public void createTableQuery(String query, String dbName) throws IOException {
@@ -24,25 +21,17 @@ public class createTable {
             exitFlag = 1;
         }
         LogWriterService.getInstance().write(informationMap);
-//        Scanner sc = new Scanner(System.in);
-//        int exitFlag = 0;
-//        while (exitFlag == 0) {
-//            System.out.println("Enter query");
-//            String query = sc.nextLine();
-//            if (parseTableQuery(query) == true) {
-//                exitFlag = 1;
-//            }
-//        }
+
     }
 
     public boolean parseTableQuery(String query,String dbName) throws IOException {
 
-        System.out.println("Line 40");
-//        query = "Create table 12Playerassa_dd56 (student_id int,name string,column3 string,PRIMARY KEY students_id);".toLowerCase();
-//        query = "create table Playerssa_dd56(asfs int,adsfas int);";
-//        query = "create table Players2(student_id int,column2 int,primary key student_id,foreign key student_id references sa2Playerssa_dd56(name));";
-//        query = "create table 5Playerssa_dd56(asf int,safdd int,primary key asf,foreign key references sa2Playerssa_dd56(student_id));";
-//        query = "create table 6Playerssa_dd56(asad int,fasgr string,primary key asad,foreign key fasgr references playersq2(asad));";
+
+//        query = "create table student_table (id int,name string,column3 string,PRIMARY KEY id);".toLowerCase();
+//        query = "create table student_details(student_id int,subjects int,primary key student_id,foreign key student_id references student_table(id));";
+//        query = "create table employee(id int,salary int,name string,primary key id,foreign key id references department(id));";
+//        query = "create table managers(id int,goals int,department_id int,foreign key department_id references department(id));";
+//        query = "create table department(id int,name string,primary key id);";
         String createTable = query.toLowerCase();
 
         String trimmedQuery = createTable.trim().replaceAll(" +", " ");
@@ -51,10 +40,9 @@ public class createTable {
 
         final Matcher matcher = compile.matcher(trimmedQuery);
         boolean matchFound = matcher.find();
-        System.out.println("matchFound: " +matchFound );
-        System.out.println("matchFound: " +matchFound );
+
         if(!matchFound){
-            System.out.println("ERROR OCCURRED Query incorrect LINE 49");
+            System.out.println("Error Occurred Query incorrect");
             return false;
         }
 
@@ -116,7 +104,6 @@ public class createTable {
             if(foreignKeyExist){
                 foreignKey = getForeignKey.group();
             }
-            System.out.println("foreignKey: "+foreignKey);
 
 //        (?<=\breferences\s)(\w+\(\w+\))
             final Pattern referencesPattern = Pattern.compile("(?<=\\breferences\\s)(\\w+\\(\\w+\\))");
@@ -126,7 +113,6 @@ public class createTable {
             if(referenceExist){
                 referencesString = getReferences.group();
             }
-            System.out.println("referencesString: "+referencesString);
 
             String[] references = referencesString.split("\\(");
             if(foreignKeyExist) {
@@ -134,19 +120,14 @@ public class createTable {
                     referenceTableName = references[0].trim();
                     referenceColumn = references[1].trim();
                     referenceColumn = referenceColumn.replaceAll("\\)", "");
-                    System.out.println("Hello World: " + columnStrings[i]);
                 }
             }
-            System.out.println("referenceTableName: "+referenceTableName);
-            System.out.println("referenceColumn: "+referenceColumn);
         }
 
         for (File file : listOfFiles) {
             if (file.isFile()) {
 
                 if(file.getName().equals(tableName+".txt")){
-                    System.out.println("table: "+tableName);
-                    System.out.println("Table Name exist: "+file.getName());
                     flagFileExist = true;
                     break;
                 }
@@ -169,7 +150,7 @@ public class createTable {
             }
         }
         if(foreignKeyExist) {
-            boolean checkForeignKey = checkForeignKeyExist(referenceTableName, referenceColumn);
+            boolean checkForeignKey = checkForeignKeyExist(referenceTableName, referenceColumn,dbName);
             if(!checkForeignKey){
                 System.out.println("Foreign key reference incorrect");
                 return false;
@@ -222,7 +203,6 @@ public class createTable {
     public static void writeToFile(String tableName, boolean primaryKeyExist, String primaryKey, List columnNames, List columnDataTypes,boolean foreignKeyExist,String foreignKey,String referenceTableName, String currentTableColumn,String dbName) {
         LogWriterService logWriterService = LogWriterService.getInstance();
         String colHeaders = "";
-        System.out.println("foreignKey: "+foreignKey);
         String colHeadersDatatype = "";
         for (int i = 0; i < columnNames.size(); i++) {
             colHeaders+= "<~colheader~>" + columnNames.get(i);
@@ -252,15 +232,12 @@ public class createTable {
         } catch ( IOException e ) {
             e.printStackTrace();
         }
-        HashMap<String,String> createTableQuery = new HashMap<>();
-        createTableQuery.put("QUERY_EXECUTION_TIME","5s");
-        logWriterService.write(createTableQuery);
     }
 
 
-    public boolean checkForeignKeyExist(String tableName,String foreignKeyColumn) throws IOException
+    public boolean checkForeignKeyExist(String tableName,String foreignKeyColumn,String dbName) throws IOException
     {
-        String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+        String tableLocation = "bin/Databases/"+dbName + "/" +tableName+".txt";
         BufferedReader br = new BufferedReader(new FileReader(tableLocation));
         List<String> ColumnList = new ArrayList<>();
         String line;
@@ -274,7 +251,8 @@ public class createTable {
                 ColumnList = Arrays.asList(columnArray);
             }
         }
-        System.out.println("ColumnList.contains(foreignKeyColumn): "+ColumnList.contains(foreignKeyColumn));
+
+        br.close();
         if(ColumnList.contains(foreignKeyColumn)){
             return true;
         }else{
@@ -293,8 +271,6 @@ public class createTable {
             if (file.isFile()) {
 
                 if(file.getName().equals(tableName+".txt")){
-                    System.out.println("table: "+tableName);
-                    System.out.println("Table Name exist: "+file.getName());
                     flagFileExist = true;
                     return true;
                 }

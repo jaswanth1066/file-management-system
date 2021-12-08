@@ -12,10 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class deleteDatabase {
-//
-//    public static void main(String[] args) throws IOException {
-//        deleteDatabaseQuery();
-//    }
+
 
     Map<String, String> informationMap = new HashMap<>();
 
@@ -30,16 +27,6 @@ public class deleteDatabase {
         }
         LogWriterService.getInstance().write(informationMap);
 
-//        Scanner sc = new Scanner(System.in);
-//        int exitFlag = 0;
-//        while (exitFlag == 0) {
-//            System.out.println("Enter query");
-//            String query = sc.nextLine();
-//            if (parseDeleteDatabaseQuery(query) == true) {
-//                exitFlag = 1;
-//            }
-//
-//        }
     }
 
     public static boolean parseDeleteDatabaseQuery(String query, String dbName){
