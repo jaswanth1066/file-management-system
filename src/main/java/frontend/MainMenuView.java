@@ -6,8 +6,7 @@ import java.nio.file.Paths;
 //Author: @Smit_Thakkar
 import java.util.Scanner;
 
-import com.csci5408project.Queries.insert;
-import com.csci5408project.Queries.select;
+import com.csci5408project.Queries.*;
 import com.csci5408project.validation.IdentifyQuery;
 import com.csci5408project.validation.ValidateQuery;
 
@@ -86,13 +85,27 @@ public final class MainMenuView {
 						com.csci5408project.Queries.update update = new com.csci5408project.Queries.update();
 						update.updateQuery(newQuery, databaseName, userName);
 					}
-					
 					if(queryType.equalsIgnoreCase("delete"))
 					{
 						com.csci5408project.Queries.delete delete = new com.csci5408project.Queries.delete();
 						delete.deleteQuery(newQuery, databaseName, userName);
 					}
-					
+					if(queryType.equalsIgnoreCase("droptable")){
+						deleteTable deleteTable = new deleteTable();
+						deleteTable.deleteTableQuery(newQuery,databaseName);
+					}
+					if(queryType.equalsIgnoreCase("dropdatabase")){
+						deleteDatabase deleteDatabase = new deleteDatabase();
+						deleteDatabase.deleteDatabaseQuery(newQuery,databaseName);
+					}
+					if(queryType.equalsIgnoreCase("createdatabase")){
+						createDatabase createDatabase = new createDatabase();
+						createDatabase.createDatabaseQuery(newQuery,databaseName);
+					}
+					if(queryType.equalsIgnoreCase("createTable")){
+						createTable createTable = new createTable();
+						createTable.createTableQuery(newQuery,databaseName);
+					}
 					// check use database , database exists ?
 					
 					// 

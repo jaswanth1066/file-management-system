@@ -9,26 +9,37 @@ import java.util.regex.Pattern;
 
 public class createTable {
 
-    public static void main(String[] args) throws IOException {
-        createTableQuery();
-    }
+//    public static void main(String[] args) throws IOException {
+//        createTableQuery();
+//    }
+    private static Map<String, String> informationMap = new HashMap<>();
 
-    public static void createTableQuery() throws IOException {
-        Scanner sc = new Scanner(System.in);
+    public void createTableQuery(String query, String dbName) throws IOException {
+
         int exitFlag = 0;
-        while (exitFlag == 0) {
-            System.out.println("Enter query");
-            String query = sc.nextLine();
-            if (parseTableQuery(query) == true) {
-                exitFlag = 1;
-            }
+        informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+
+        if(parseTableQuery(query,dbName))
+        {
+            exitFlag = 1;
         }
+        LogWriterService.getInstance().write(informationMap);
+//        Scanner sc = new Scanner(System.in);
+//        int exitFlag = 0;
+//        while (exitFlag == 0) {
+//            System.out.println("Enter query");
+//            String query = sc.nextLine();
+//            if (parseTableQuery(query) == true) {
+//                exitFlag = 1;
+//            }
+//        }
     }
 
-    public static boolean parseTableQuery(String query) throws IOException {
+    public boolean parseTableQuery(String query,String dbName) throws IOException {
 
-//        query = "  Create table sa2Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);".toLowerCase();
-//        query = "create table 3Playerssa_dd56(asfs int,adsfas int);";
+        System.out.println("Line 40");
+//        query = "Create table 12Playerassa_dd56 (student_id int,name string,column3 string,PRIMARY KEY students_id);".toLowerCase();
+//        query = "create table Playerssa_dd56(asfs int,adsfas int);";
 //        query = "create table Players2(student_id int,column2 int,primary key student_id,foreign key student_id references sa2Playerssa_dd56(name));";
 //        query = "create table 5Playerssa_dd56(asf int,safdd int,primary key asf,foreign key references sa2Playerssa_dd56(student_id));";
 //        query = "create table 6Playerssa_dd56(asad int,fasgr string,primary key asad,foreign key fasgr references playersq2(asad));";
@@ -83,7 +94,7 @@ public class createTable {
 
         String primaryKey = "";
 
-        File folder = new File("bin/Databases/TestDatabase/");
+        File folder = new File("bin/Databases/"+ dbName);
         File[] listOfFiles = folder.listFiles();
 
         boolean flagCheckTable = checkTableExist(tableName,folder);
@@ -174,9 +185,9 @@ public class createTable {
             primaryKey = getPrimaryKey.group();
         } else{
             if(foreignKeyExist){
-                writeToFile(tableName,false,"",columnNames,columnDataTypes,true,referenceColumn,referenceTableName,foreignKey);
+                writeToFile(tableName,false,"",columnNames,columnDataTypes,true,referenceColumn,referenceTableName,foreignKey,dbName);
             }else{
-                writeToFile(tableName,false,"",columnNames,columnDataTypes,false,"","","");
+                writeToFile(tableName,false,"",columnNames,columnDataTypes,false,"","","",dbName);
             }
             return true;
         }
@@ -203,12 +214,12 @@ public class createTable {
             }
         }
 
-        writeToFile(tableName,primaryKeyExist,parsedPrimaryKey,columnNames,columnDataTypes,flagForeignKey,referenceColumn,referenceTableName,foreignKey);
+        writeToFile(tableName,primaryKeyExist,parsedPrimaryKey,columnNames,columnDataTypes,flagForeignKey,referenceColumn,referenceTableName,foreignKey,dbName);
         return true;
 
     }
 
-    public static void writeToFile(String tableName, boolean primaryKeyExist, String primaryKey, List columnNames, List columnDataTypes,boolean foreignKeyExist,String foreignKey,String referenceTableName, String currentTableColumn) {
+    public static void writeToFile(String tableName, boolean primaryKeyExist, String primaryKey, List columnNames, List columnDataTypes,boolean foreignKeyExist,String foreignKey,String referenceTableName, String currentTableColumn,String dbName) {
         LogWriterService logWriterService = LogWriterService.getInstance();
         String colHeaders = "";
         System.out.println("foreignKey: "+foreignKey);
@@ -220,7 +231,7 @@ public class createTable {
         String table = "<~tablename~>" + tableName;
 
         try {
-            PrintWriter writer = new PrintWriter("bin/Databases/TestDatabase/"+ tableName+".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("bin/Databases/"+dbName +"/" + tableName+".txt", "UTF-8");
             writer.println(table);
 
             if(primaryKeyExist){
@@ -247,7 +258,7 @@ public class createTable {
     }
 
 
-    public static boolean checkForeignKeyExist(String tableName,String foreignKeyColumn) throws IOException
+    public boolean checkForeignKeyExist(String tableName,String foreignKeyColumn) throws IOException
     {
         String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
         BufferedReader br = new BufferedReader(new FileReader(tableLocation));
@@ -274,7 +285,7 @@ public class createTable {
     }
 
 
-    public static boolean checkTableExist(String tableName,File filePath) throws IOException{
+    public boolean checkTableExist(String tableName,File filePath) throws IOException{
         File[] listOfFiles = filePath.listFiles();
         boolean flagFileExist = false;
         boolean referenceTableExist = false;
@@ -297,7 +308,7 @@ public class createTable {
     }
 
 
-    public static void foreignKeyInformation(String query,File filePath){
+    public void foreignKeyInformation(String query,File filePath){
 //        Line 98 to 130
         final Pattern foreignKeyPattern = Pattern.compile("(?<=\\bforeign key\\s)(\\w+)");
         final Matcher getForeignKey = foreignKeyPattern.matcher(query);
