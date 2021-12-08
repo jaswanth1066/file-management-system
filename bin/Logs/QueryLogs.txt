@@ -3,3 +3,22 @@
 <Tue Dec 07 20:10:05 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Honey,B00873863,data)>
 <Tue Dec 07 20:10:21 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,2010,data)>
 <Tue Dec 07 20:26:18 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID) values (Parikh,1997)>
+<Wed Dec 08 08:02:42 AST 2021>-<Harsh>-<Executed Query is : use testdatabase>
+<Wed Dec 08 08:03:56 AST 2021>-<Harsh>-<Executed Query is : use testdatabase>
+<Wed Dec 08 08:06:17 AST 2021>-<Harsh>-<Executed Query is : use Testdatabase>
+<Wed Dec 08 08:09:08 AST 2021>-<Harsh>-<Executed Query is : drop table aplayerssa_dd56;>
+<Wed Dec 08 08:11:38 AST 2021>-<Harsh>-<Executed Query is : drop table aplayerssa_dd56;>
+<Wed Dec 08 08:13:33 AST 2021>-<Harsh>-<Executed Query is : drop table aplayerssa@dd56;>
+<Wed Dec 08 08:13:54 AST 2021>-<Harsh>-<Executed Query is : drop table aplayerssa_dd56;>
+<Wed Dec 08 08:15:46 AST 2021>-<Harsh>-<Executed Query is : drop table safdg;>
+<Wed Dec 08 09:08:11 AST 2021>-<Harsh>-<Executed Query is : select * from StudentTable>
+<Wed Dec 08 09:12:36 AST 2021>-<Harsh>-<Executed Query is : drop table players;>
+<Wed Dec 08 09:23:45 AST 2021>-<Harsh>-<Executed Query is : drop table players;>
+<Wed Dec 08 11:04:44 AST 2021>-<Harsh>-<Executed Query is : Create table sa2Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);>
+<Wed Dec 08 11:08:13 AST 2021>-<Harsh>-<Executed Query is : Create table sa2Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);>
+<Wed Dec 08 11:19:58 AST 2021>-<Harsh>-<Executed Query is : Create table 12Playerssa_dd56 (student_id int,name string,column3 string,PRIMARY KEY student_id);>
+<Wed Dec 08 11:26:45 AST 2021>-<Harsh>-<Executed Query is : create table Playerssa_dd56(asfs inst,adsfas int);>
+<Wed Dec 08 11:28:49 AST 2021>-<Harsh>-<Executed Query is : Create table 12Playerassa_dd56 (student_id int,name string,column3 string,PRIMARY KEY studentas_id);>
+<Wed Dec 08 11:29:04 AST 2021>-<Harsh>-<Executed Query is : create table saf(sas int);>
+<Wed Dec 08 11:31:22 AST 2021>-<Harsh>-<Executed Query is : drop table saf;>
+<Wed Dec 08 11:31:35 AST 2021>-<Harsh>-<Executed Query is : drop table asds;>

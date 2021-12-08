@@ -1,30 +1,47 @@
 package com.csci5408project.Queries;
 
+import com.csci5408project.log_management.LogWriterService;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class createDatabase {
-    public static void main(String[] args) throws IOException {
-        createDatabaseQuery();
-    }
-    public static void createDatabaseQuery() throws IOException {
-        Scanner sc = new Scanner(System.in);
+
+//    public static void main(String[] args) throws IOException {
+//        createDatabaseQuery();
+//    }
+
+    Map<String, String> informationMap = new HashMap<>();
+
+    public void createDatabaseQuery(String query,String dbName) throws IOException {
         int exitFlag = 0;
-        while (exitFlag == 0) {
-            System.out.println("Enter query");
-            String query = sc.nextLine();
-            if (parseDatabaseQuery(query) == true) {
-                exitFlag = 1;
-            }
+        informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
 
+        if(parseDatabaseQuery(query,dbName) == true)
+        {
+            exitFlag = 1;
         }
+        LogWriterService.getInstance().write(informationMap);
+
+//        Scanner sc = new Scanner(System.in);
+//        int exitFlag = 0;
+//        while (exitFlag == 0) {
+//            System.out.println("Enter query");
+//            String query = sc.nextLine();
+//            if (parseDatabaseQuery(query) == true) {
+//                exitFlag = 1;
+//            }
+//
+//        }
     }
 
-    public static boolean parseDatabaseQuery(String query) throws IOException {
+    public boolean parseDatabaseQuery(String query, String dbName) throws IOException {
         String createDatabase = query.toLowerCase();
         String trimmedQuery = createDatabase.trim().replaceAll(" +", " ");
         final Pattern compile = Pattern.compile("create database (\\w+);");

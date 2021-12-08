@@ -2,6 +2,8 @@ package com.csci5408project.Queries;
 
 import Backend.SetDatabase;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -27,6 +29,7 @@ public class useDatabase {
 
     public static boolean parseUseDatabaseQuery(String query){
 
+        query = query.toLowerCase();
         String useDBQuery = query.trim().replaceAll(" +", " ");
         final Pattern useDBCompile = Pattern.compile("use (\\w+);");
 
@@ -52,11 +55,31 @@ public class useDatabase {
             System.out.println("Syntax error");
             return false;
         }
-        System.out.println("databaseName: " + databaseName);
+
+        File file = new File("bin/Databases");
+        boolean dbMatchFound = false;
+        String[] databases = file.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
+        });
+
+        for(int i = 0; i < databases.length; i++){
+
+            if(databases[i].toLowerCase().equals(databaseName)){
+                System.out.println("Error occurred Database exist");
+                dbMatchFound =  true;
+                SetDatabase.getInstance().setDb(databaseName);
+                break;
+            }
+        }
+
+        if(!dbMatchFound){
+            System.out.println("Database does not exist");
+            return false;
+        }
         SetDatabase.getInstance().setDb(databaseName);
-
-
-        System.out.println("setDatabase.getDb();: "+SetDatabase.getInstance().getDb());
 
         return true;
     }

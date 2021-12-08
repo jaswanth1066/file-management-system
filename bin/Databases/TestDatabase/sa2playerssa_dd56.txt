@@ -1,4 +1,0 @@
-<~tablename~>sa2playerssa_dd56
-<~colheader~>student_id<~colheader~>name<~colheader~>column3
-<~coldatatype~>int<~coldatatype~>string<~coldatatype~>string
-<~metadata~>primarykey=student_id
