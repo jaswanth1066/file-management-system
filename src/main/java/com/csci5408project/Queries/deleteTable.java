@@ -34,11 +34,9 @@ public class deleteTable {
         final Pattern compile = Pattern.compile("drop table (\\w+);");
         final Matcher matcher = compile.matcher(trimmedQuery);
         boolean matchFound = matcher.find();
-        System.out.println("deleteTable: "+deleteTable);
-        System.out.println("dbName: "+dbName);
-        System.out.println("matchFound: " +matchFound );
+
         if(!matchFound){
-            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.out.println("error occurred Query incorrect");
             return false;
         }
 
@@ -54,14 +52,12 @@ public class deleteTable {
             return false;
         }
 
-        System.out.println("tableName: "+tableName);
 
         File folder = new File("bin/Databases/" + dbName);
         File[] listOfFiles = folder.listFiles();
         boolean flagFileExist = false;
         for (File file : listOfFiles) {
             if (file.isFile()) {
-                System.out.println("fole get name" +file.getName());
                 if(file.getName().equals(tableName+".txt")){
                     flagFileExist = true;
                     break;

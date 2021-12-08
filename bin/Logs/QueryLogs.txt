@@ -22,3 +22,28 @@
 <Wed Dec 08 11:29:04 AST 2021>-<Harsh>-<Executed Query is : create table saf(sas int);>
 <Wed Dec 08 11:31:22 AST 2021>-<Harsh>-<Executed Query is : drop table saf;>
 <Wed Dec 08 11:31:35 AST 2021>-<Harsh>-<Executed Query is : drop table asds;>
+<Wed Dec 08 11:37:41 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 13:30:38 AST 2021>-<Harsh>-<Executed Query is : create database harsh;>
+<Wed Dec 08 13:53:35 AST 2021>-<Harsh>-<Executed Query is : create table student_table (id int,name string,column3 string,PRIMARY KEY students_id);>
+<Wed Dec 08 13:53:49 AST 2021>-<Harsh>-<Executed Query is : create table student_table (id int,name string,column3 string,PRIMARY KEY id);>
+<Wed Dec 08 14:06:16 AST 2021>-<Harsh>-<Executed Query is : create table student_table (id int,name string,column3 string,PRIMARY KEY id);>
+<Wed Dec 08 14:07:01 AST 2021>-<Harsh>-<Executed Query is : create table student_details(student_id int,subjects int,primary key student_id,foreign key student_id references student_table(id));>
+<Wed Dec 08 14:11:32 AST 2021>-<Harsh>-<Executed Query is : create table department(id int,name string,primary key id);>
+<Wed Dec 08 14:11:47 AST 2021>-<Harsh>-<Executed Query is : create table managers(id int,goals int,department_id int,foreign key department_id references department(id));>
+<Wed Dec 08 14:30:50 AST 2021>-<Harsh>-<Executed Query is : create table employee(id int,salary int,name string,primary key asf,foreign key references department(student_id));>
+<Wed Dec 08 14:31:09 AST 2021>-<Harsh>-<Executed Query is : create table employee(id int,salary int,name string,primary key id,foreign key references department(student_id));>
+<Wed Dec 08 14:32:35 AST 2021>-<Harsh>-<Executed Query is : create table employee(id int,salary int,name string,primary key id,foreign key id references department(student_id));>
+<Wed Dec 08 14:33:54 AST 2021>-<Harsh>-<Executed Query is : create table employee(id int,salary int,name string,primary key id,foreign key id references department(id));>
+<Wed Dec 08 14:37:24 AST 2021>-<Harsh>-<Executed Query is : drop table managers;>
+<Wed Dec 08 14:55:00 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 14:56:22 AST 2021>-<Harsh>-<Executed Query is : drop database harsh>
+<Wed Dec 08 14:56:31 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 14:58:49 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 15:01:41 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 15:02:19 AST 2021>-<Harsh>-<Executed Query is : create database harsh;>
+<Wed Dec 08 15:02:38 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 15:03:51 AST 2021>-<Harsh>-<Executed Query is : create database harsh;>
+<Wed Dec 08 15:04:05 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
+<Wed Dec 08 15:04:49 AST 2021>-<Harsh>-<Executed Query is : create database harsh;>
+<Wed Dec 08 15:05:14 AST 2021>-<Harsh>-<Executed Query is : drop database has;>
+<Wed Dec 08 15:05:20 AST 2021>-<Harsh>-<Executed Query is : drop database harsh;>
