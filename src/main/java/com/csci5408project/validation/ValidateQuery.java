@@ -21,7 +21,7 @@ public class ValidateQuery {
 		query = query.toLowerCase();
 		String queryType = this.identifyQuery.identifyQuery(query);
 		if (queryType == null) {
-			return "Query should start with Select, Insert, Update or Delete keywords.";
+			return "Query should start with Create table, create database, Select, Insert, Update, Delete, drop or use database keywords.";
 		}
 		String error = null;
 		String[] wordsInQuery = query.split(" ");
