@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 import com.csci5408project.Queries.*;
+import com.csci5408project.SqlDump;
 import com.csci5408project.validation.IdentifyQuery;
 import com.csci5408project.validation.ValidateQuery;
 
@@ -119,7 +120,8 @@ public final class MainMenuView {
 				}
 				break;
 			case "2":
-
+				SqlDump sqlDump = new SqlDump();
+				sqlDump.generateSqlDump();
 				break;
 			case "3":
 
