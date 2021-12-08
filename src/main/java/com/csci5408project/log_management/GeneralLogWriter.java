@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
 
+import Backend.SetDatabase;
 import frontend.Session;
 
 public class GeneralLogWriter {
 
 //	private String filePath = "/Users/jaswanth106/Desktop/GeneralLogs.txt";
-	private String filePath = "bin/Logs/GeneralLogs.txt";
+	public static final String filePath = "bin/Logs/GeneralLogs.txt";
 
 	private File file;
 	private java.io.FileWriter fileWriter;
@@ -31,7 +32,7 @@ public class GeneralLogWriter {
 
 	public void start() {
 		try {
-			file = new File(this.filePath);
+			file = new File(GeneralLogWriter.filePath);
 			file.createNewFile();
 			this.fileWriter = new java.io.FileWriter(this.file, true);
 			this.bufferedWriter = new BufferedWriter(this.fileWriter);
@@ -46,6 +47,7 @@ public class GeneralLogWriter {
 			StringBuffer sb = new StringBuffer();
 			sb.append("<").append(calendar.getTime()).append(">-");
 			sb.append("<").append(Session.getInstance().getLoggedInUser().getUserName()).append(">-");
+			sb.append("<").append(SetDatabase.getInstance().getDb()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
 			sb.append("<").append("Time taken for query to extecute is : ")
 					.append(information.get(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY)).append(". Database state is: ")

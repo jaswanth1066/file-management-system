@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
 
+import Backend.SetDatabase;
 import frontend.Session;
 
 public class QueryLogWriter {
 
 //	private String filePath = "/Users/jaswanth106/Desktop/QueryLogs.txt";
-	private String filePath = "bin/Logs/QueryLogs.txt";
+	public static final String filePath = "bin/Logs/QueryLogs.txt";
 
 	private File file;
 	private java.io.FileWriter fileWriter;
@@ -31,7 +32,7 @@ public class QueryLogWriter {
 
 	public void start() {
 		try {
-			file = new File(this.filePath);
+			file = new File(QueryLogWriter.filePath);
 			file.createNewFile();
 			this.fileWriter = new java.io.FileWriter(this.file, true);
 			this.bufferedWriter = new BufferedWriter(this.fileWriter);
@@ -46,6 +47,7 @@ public class QueryLogWriter {
 			StringBuffer sb = new StringBuffer();
 			sb.append("<").append(calendar.getTime()).append(">-");
 			sb.append("<").append(Session.getInstance().getLoggedInUser().getUserName()).append(">-");
+			sb.append("<").append(SetDatabase.getInstance().getDb()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
 			sb.append("<").append("Executed Query is : ").append(informationMap.get(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY)).append(">");
 			this.bufferedWriter.newLine();
