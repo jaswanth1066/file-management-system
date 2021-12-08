@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.csci5408project.log_management.LogWriterService;
+import com.csci5408project.validation.ValidateQuery;
 
 // delete from StudentTable where StudentName = Parth
 // delete from StudentTable where StudentID=2002
@@ -29,8 +30,11 @@ public class delete {
 
 	public  void deleteQuery(String query,String databaseName,String userName) throws IOException {
 		
+		ValidateQuery myQuery = new ValidateQuery();
+		long startTime = System.nanoTime();
+		if(myQuery.getError(query) == null)
+		{
 			informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
-			long startTime = System.nanoTime();
 	        Pattern wherePattern = Pattern.compile("delete from\\s+(.*)\\s+where\\s+(.*)");
 	        Matcher matcher = wherePattern.matcher(query);
 	        
@@ -49,7 +53,7 @@ public class delete {
 				}
 	        	else
 	        	{
-	        		deleteAllContents(matcherWithoutWhere.group(1),databaseName);
+	        		writeToFile(deleteAllContents(matcherWithoutWhere.group(1),databaseName),matcherWithoutWhere.group(1),databaseName);
 	        	}
 	        }
 	        else
@@ -64,9 +68,17 @@ public class delete {
 				writeToFile(deleteRows(query, matcher.group(1),databaseName), matcher.group(1),databaseName);
 				}
 	        }
-		    long stopTime = System.nanoTime();
-		    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
-		    LogWriterService.getInstance().write(informationMap);
+
+	}
+		else
+		{
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, myQuery.getError(query));
+			System.out.println(myQuery.getError(query));
+		}
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    LogWriterService.getInstance().write(informationMap);
+		
 	}
 	
 	public  boolean checkTableExistence(String tableName,String databaseName) {
@@ -120,6 +132,7 @@ public class delete {
 	    	}
 	    }
 	    System.out.println("Rows affected : "+ rowsAffected);
+	    informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CHANGES_KEY , ""+rowsAffected);
 	    return tableData;
     }
 
@@ -132,9 +145,28 @@ public class delete {
 	    fileWriter.flush();
     }
     
-    public  void deleteAllContents(String tableName,String databaseName) throws FileNotFoundException
+//    public  void deleteAllContents(String tableName,String databaseName) throws FileNotFoundException
+//    {
+//    	PrintWriter pw = new PrintWriter("bin/Databases/"+databaseName+"/"+tableName+".txt");
+//    	pw.close();
+//    }
+    
+    public static Map deleteAllContents(String tableName , String databaseName) throws IOException
     {
-    	PrintWriter pw = new PrintWriter("bin/Databases/"+databaseName+"/"+tableName+".txt");
-    	pw.close();
+		
+		String line;
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt" ;
+		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
+    	Map<Integer, String> cleanedTable = new HashMap<>();
+    	int linenumber =0;
+    	while ((line = br.readLine()) != null) 
+	    {
+	    	if(line.startsWith("<~row~>") == false)
+	    	{
+	    		cleanedTable.put(linenumber, line);
+	    		linenumber += 1;
+	    	}
+	    }
+    	return cleanedTable;
     }
 }

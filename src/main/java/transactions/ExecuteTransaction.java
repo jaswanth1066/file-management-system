@@ -1,5 +1,7 @@
 package transactions;
-
+//Author
+//Kandarp Parikh
+//B00873863
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,6 +23,7 @@ import com.csci5408project.log_management.LogWriterService;
 // update StudentTable set StudentName=HetChanged where StudentID = 0002
 // update StudentTable set StudentName=HarshChanged where StudentID = 0001
 // delete from StudentTable where StudentID=0002
+
 public class ExecuteTransaction {
 	Map<String, String> informationMap = new HashMap<>();
 public  void beginTransaction(String database) throws IOException {
@@ -32,7 +35,6 @@ public  void beginTransaction(String database) throws IOException {
 	Map transactionFile = new HashMap<>();
 
 	String databaseName = database;
-
 
 	System.out.println("Select TableName : use <Table name>");
 	Scanner sc = new Scanner(System.in);
@@ -55,10 +57,12 @@ public  void beginTransaction(String database) throws IOException {
 		informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock applied on table : "+tableName);
 		long startTime = System.nanoTime();
 		transactionFile = getTableData(databaseName,tableName);
+		
+		// print current state of file
 	    for (Object value : transactionFile.values()) {
 	    	System.out.println(value.toString() + newLine);
 	    }
-	    if(queryProcessor(transactionFile,tableName)==false)
+	    if(queryProcessor(transactionFile,tableName,databaseName)==false)
 	    {
 	    	//commitFlag = 1;
 	    }
@@ -67,7 +71,7 @@ public  void beginTransaction(String database) throws IOException {
 	    	commitFlag=1;
 	    }
 	    long stopTime = System.nanoTime();
-	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(stopTime-startTime));
 	}
 	else
 	{
@@ -142,7 +146,7 @@ public  Map<Integer, String> getTableData(String databaseName, String tableName)
     return tableData;
 }
 
-public  boolean queryProcessor(Map<Integer, String> transactionFile , String tableName) throws IOException
+public  boolean queryProcessor(Map<Integer, String> transactionFile , String tableName , String databaseName) throws IOException
 {
 	int commitFlag = 0;
 	while(commitFlag == 0)
@@ -155,13 +159,13 @@ public  boolean queryProcessor(Map<Integer, String> transactionFile , String tab
 		if(typeOfQuery.equals("insert"))
 		{
 			insert i = new insert();
-			i.insertTransaction(query,transactionFile);
+			i.insertTransaction(query,transactionFile, databaseName , tableName);
 		}
 		
 		else if(typeOfQuery.equals("update"))
 		{
 			update u = new update();
-			transactionFile = u.updateTransaction(query,transactionFile);
+			transactionFile = u.updateTransaction(query,transactionFile, databaseName , tableName);
 			for(String s : transactionFile.values())
 			{
 				System.out.println(s);
@@ -171,12 +175,12 @@ public  boolean queryProcessor(Map<Integer, String> transactionFile , String tab
 		else if(typeOfQuery.equals("delete"))
 		{
 			delete u = new delete();
-			transactionFile = u.deleteTransaction(query,transactionFile);
+			transactionFile = u.deleteTransaction(query,transactionFile , databaseName , tableName);
 		}
 		
 		else if(typeOfQuery.equals("commit"))
 		{
-	    	Writer fileWriter = new FileWriter("bin/Databases/TestDatabase/"+tableName+".txt", false);
+	    	Writer fileWriter = new FileWriter("bin/Databases/"+databaseName+"/"+tableName+".txt", false);
 	    	String newLine = System.getProperty("line.separator");
 		    for (Object value : transactionFile.values()) {
 		    	fileWriter.write(value.toString() + newLine);

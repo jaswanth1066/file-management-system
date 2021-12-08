@@ -3,3 +3,51 @@
 <Tue Dec 07 20:10:05 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Honey,B00873863,data)>
 <Tue Dec 07 20:10:21 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,2010,data)>
 <Tue Dec 07 20:26:18 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID) values (Parikh,1997)>
+<Wed Dec 08 10:39:21 AST 2021>-<kandarp>-<Executed Query is : select * from StudentTable>
+<Wed Dec 08 10:40:23 AST 2021>-<kandarp>-<Executed Query is : select * from StudentTable where StudentID=9999>
+<Wed Dec 08 11:38:12 AST 2021>-<kandarp>-<Executed Query is : select * from StudentTable>
+<Wed Dec 08 11:38:26 AST 2021>-<kandarp>-<Executed Query is : select * from StudentTable where StudentName=KandarpParikh>
+<Wed Dec 08 11:38:42 AST 2021>-<kandarp>-<Executed Query is : select StudentName,StudentID from StudentTable where StudentName=parikh>
+<Wed Dec 08 11:39:04 AST 2021>-<kandarp>-<Executed Query is : select StudentName,StudentID from StudentTable where StudentName=Parikh>
+<Wed Dec 08 11:39:24 AST 2021>-<kandarp>-<Executed Query is : select StudentName from StudentTable where StudentID=123>
+<Wed Dec 08 11:39:55 AST 2021>-<kandarp>-<Executed Query is : select StudentName,StudentID from StudentTable where StudentID=456>
+<Wed Dec 08 12:14:34 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)>
+<Wed Dec 08 12:15:15 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)>
+<Wed Dec 08 12:17:03 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)>
+<Wed Dec 08 12:17:40 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)>
+<Wed Dec 08 12:21:19 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)>
+<Wed Dec 08 12:21:45 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)>
+<Wed Dec 08 12:22:18 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)>
+<Wed Dec 08 12:43:51 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,address) values (Kandarp,9999,data)>
+<Wed Dec 08 12:44:06 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,address,student) values (Kandarp,9999,data)>
+<Wed Dec 08 12:46:08 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,StudentID,StudentID) values (Kandarp,9999,data)>
+<Wed Dec 08 12:46:20 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,StudentID) values (Kandarp,9999,data)>
+<Wed Dec 08 12:46:32 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,Address) values (Kandarp,9999,data)>
+<Wed Dec 08 12:46:41 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,StudentID,StudentID) values (Kandarp,9999,data,1234)>
+<Wed Dec 08 12:50:41 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,Course) values (Kandarp, 8989 ,data)>
+<Wed Dec 08 13:06:53 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)>
+<Wed Dec 08 13:07:24 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,1111,data)>
+<Wed Dec 08 13:07:46 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)>
+<Wed Dec 08 13:08:16 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,address) values (Kandarp,9999,data)>
+<Wed Dec 08 13:08:45 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,Course) values (Kandarp, 8989 ,data)>
+<Wed Dec 08 13:09:08 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,StudentID,StudentID) values (Kandarp,9999,data,1234)>
+<Wed Dec 08 13:52:41 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=Kandarp,StudentID=0982 where StudentName=KandarpParikh>
+<Wed Dec 08 13:52:49 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=SmitPatel,StudentID=0909 where StudentName=Milap>
+<Wed Dec 08 13:52:59 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=HarvikPatel,StudentID=654 where StudentName=Harvik>
+<Wed Dec 08 13:55:30 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=HarvikPatel,StudentID=654 where StudentName=Harvik>
+<Wed Dec 08 14:03:37 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=Kandarp,StudentID=0982 where StudentName=KandarpParikh>
+<Wed Dec 08 14:04:21 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=SmitPatel,StudentID=0909 where StudentName=Milap>
+<Wed Dec 08 14:05:16 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentID=0909 where StudentName=SmitPatel>
+<Wed Dec 08 14:38:57 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable where StudentName = Kandarp>
+<Wed Dec 08 14:39:17 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable where StudentID=2002>
+<Wed Dec 08 14:39:36 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable>
+<Wed Dec 08 15:07:57 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable where StudentName = Kandarp>
+<Wed Dec 08 15:08:22 AST 2021>-<kandarp>-<Executed Query is : delete from table>
+<Wed Dec 08 15:08:37 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable>
+<Wed Dec 08 15:18:34 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable>
+<Wed Dec 08 15:23:21 AST 2021>-<kandarp>-<Executed Query is : delete from StudentTable>
+<Wed Dec 08 17:05:37 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Harsh,0001,data)>
+<Wed Dec 08 17:05:45 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Het,0002,Software)>
+<Wed Dec 08 17:05:56 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (daks,0003,SDC)>
+<Wed Dec 08 17:08:20 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Harsh,0001,data)>
+<Wed Dec 08 17:14:03 AST 2021>-<kandarp>-<Executed Query is : update StudentTable set StudentName=James where StudentID=0003>

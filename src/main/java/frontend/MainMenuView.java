@@ -65,9 +65,7 @@ public final class MainMenuView {
 						exitFlag = 1;
 						break;
 					}
-					String queryType = iq.identifyQuery(newQuery).toString();
-					System.out.println(queryType);
-					
+					String queryType = iq.identifyQuery(newQuery).toString();					
 					
 					if(queryType.equalsIgnoreCase("select"))
 					{
@@ -92,12 +90,6 @@ public final class MainMenuView {
 						com.csci5408project.Queries.delete delete = new com.csci5408project.Queries.delete();
 						delete.deleteQuery(newQuery, databaseName, userName);
 					}
-					
-					// check use database , database exists ?
-					
-					// 
-					ValidateQuery validate = new ValidateQuery();
-					//validate.getError(query , userSession.getLoggedInUser().toString())
 					}
 				}
 				else
