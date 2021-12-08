@@ -22,7 +22,6 @@ public class createTable {
             if (parseTableQuery(query) == true) {
                 exitFlag = 1;
             }
-
         }
     }
 

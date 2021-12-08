@@ -1,5 +1,2 @@
-1 smitthakkar1998 smit@gmail.com 4d1ff5cca36f9e22f95344ce4d734fe7cccf2b86b047b74a13f14bf97a769016 neha 1998 tenet riya
-2 kandarp kp@gmail.com 09592d8e9a1615a1653ae6bd5869a569199ab0e5e05523578abf3ef97b2f4b8e xyz 1998 tenet sheetal
-3 dhrumil dh@gmail.com 58b885554fd44ba723eea486b76760700dc1effae35bd8c4a49397dccb86ea73 xyz 1998 tenet xyz
-4 deep deep@gmail.com 8b2d2a19062286e04a739d617191255048ba243c3afaea3720aa86597e46240e deep 1998 deep deep
-5 harvik harvik@gmail.com 539398e0361d509695db129bdf6cce2f28f032ce9b9c493ce93afa14be3bab23 harvik 1998 harvik harvik
+1 kandarp kandarp@gmail.com 179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca mummy 1997 tenet tenete
+2 parikh parikh@gmail.com 179588aa09cff63f9230f9d80fb2d294159e3aababd22b3338e922a879f92eca mummy 1997 tenet tenete

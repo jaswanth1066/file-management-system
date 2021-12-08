@@ -3,6 +3,7 @@ package com.csci5408project;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 
@@ -82,7 +83,7 @@ public class Csci5408ProjectApplication {
 		return userLoginView.performLogin();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		final Csci5408ProjectApplication entry = new Csci5408ProjectApplication();
 		final MainPrinter printer = MainPrinter.getInstance();
 		final Scanner scanner = new Scanner(System.in);

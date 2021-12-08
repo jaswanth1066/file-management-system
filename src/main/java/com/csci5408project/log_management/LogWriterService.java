@@ -25,7 +25,7 @@ public class LogWriterService {
 		return instance;
 	}
 
-	private LogWriterService() {
+	LogWriterService() {
 		start();
 	}
 	
