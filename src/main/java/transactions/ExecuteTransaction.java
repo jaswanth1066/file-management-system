@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.csci5408project.log_management.LogWriterService;
+
 // insert into StudentTable (StudentName,StudentID,Course) values (Harsh,0001,data)
 // insert into StudentTable (StudentName,StudentID,Course) values (Het,0002,Software)
 // insert into StudentTable (StudentName,StudentID,Course) values (daks,0003,SDC)
@@ -20,24 +22,38 @@ import java.util.Scanner;
 // update StudentTable set StudentName=HarshChanged where StudentID = 0001
 // delete from StudentTable where StudentID=0002
 public class ExecuteTransaction {
-public static void main(String[] args) throws IOException {
+	Map<String, String> informationMap = new HashMap<>();
+public  void beginTransaction(String database) throws IOException {
+	
 	int commitFlag = 0;
 	while(commitFlag == 0)
 	{
 	System.out.println("Transaction starts");
 	Map transactionFile = new HashMap<>();
-	
-	System.out.println("Select Database : use <Database name>");
+
+	String databaseName = database;
+
+
+	System.out.println("Select TableName : use <Table name>");
 	Scanner sc = new Scanner(System.in);
-	String databaseName = sc.nextLine().split(" ")[1];
-	
-	System.out.println("Select Database : use <Table name>");
-	String tableName = sc.nextLine().split(" ")[1];
+	String s = sc.nextLine();
+	String tableName = "";
+	if(s.equals("exit"))
+	{
+		commitFlag = 1;
+		break;
+	}
+	if(s.split(" ").length>1)
+	{
+		tableName = s.split(" ")[1];
+	}
 
 	if(checkLock(tableName)==false)
 	{
 		String newLine = System.getProperty("line.separator");
 		applyLock(tableName);
+		informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock applied on table : "+tableName);
+		long startTime = System.nanoTime();
 		transactionFile = getTableData(databaseName,tableName);
 	    for (Object value : transactionFile.values()) {
 	    	System.out.println(value.toString() + newLine);
@@ -46,15 +62,23 @@ public static void main(String[] args) throws IOException {
 	    {
 	    	//commitFlag = 1;
 	    }
+	    else
+	    {
+	    	commitFlag=1;
+	    }
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
 	}
 	else
 	{
+		informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "ERROR : Table is locked , Table name :"+tableName);
 		System.out.println("ERROR : Table is locked");
 	}
 	}
+    LogWriterService.getInstance().write(informationMap);
 }
 
-public static boolean checkLock(String tableName) throws IOException
+public  boolean checkLock(String tableName) throws IOException
 {
 	String LockManagerLocation = "bin/Databases/LockManager.txt";
 	BufferedReader br = new BufferedReader(new FileReader(LockManagerLocation));
@@ -69,7 +93,7 @@ public static boolean checkLock(String tableName) throws IOException
 	    return false;
 }
 
-public static void applyLock(String tableName)
+public  void applyLock(String tableName)
 {
     String newLine = System.getProperty("line.separator");
     String LockManagerLocation = "bin/Databases/LockManager.txt";
@@ -80,7 +104,7 @@ public static void applyLock(String tableName)
     catch (Exception e) {}
 }
 
-public static void releaseLock(String tableName) throws IOException
+public  void releaseLock(String tableName) throws IOException
 {
 	Map<Integer, String> locks = new HashMap<>();
 	String LockManagerLocation = "bin/Databases/LockManager.txt";
@@ -103,7 +127,7 @@ public static void releaseLock(String tableName) throws IOException
 	    fileWriter.flush();
 }
 
-public static Map<Integer, String> getTableData(String databaseName, String tableName) throws IOException
+public  Map<Integer, String> getTableData(String databaseName, String tableName) throws IOException
 {
 	Map<Integer, String> tableData = new HashMap<>();
 	String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
@@ -118,7 +142,7 @@ public static Map<Integer, String> getTableData(String databaseName, String tabl
     return tableData;
 }
 
-public static boolean queryProcessor(Map<Integer, String> transactionFile , String tableName) throws IOException
+public  boolean queryProcessor(Map<Integer, String> transactionFile , String tableName) throws IOException
 {
 	int commitFlag = 0;
 	while(commitFlag == 0)
@@ -159,11 +183,16 @@ public static boolean queryProcessor(Map<Integer, String> transactionFile , Stri
 		    }
 		    fileWriter.flush();
 		    releaseLock(tableName);
+		    informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Transaction commited to table : "+tableName);
+		    informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock released on table : "+tableName);
 		    break;
 	    }
 		
 		else if(typeOfQuery.equals("rollback"))
 		{
+		    releaseLock(tableName);
+		    informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Rollback Operation performed on table : "+tableName);
+		    informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock released on table : "+tableName);
 		    break;
 	    }
 		

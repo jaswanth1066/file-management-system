@@ -15,10 +15,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.csci5408project.log_management.LogWriterService;
 // Author
 // Kandarp Parikh
 // B00873863
 public class insert {
+	 Map<String, String> informationMap = new HashMap<>();
 	//Check the existence of table
 	// Get metadata
 	//Get primary key column
@@ -29,52 +32,45 @@ public class insert {
 	//VALUES (value1, value2, value3, ...);
 	
 	//insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)
-	public static void main(String[] args) throws IOException {
-		int flag = 0;
-		while(flag == 0)
-		{
-		System.out.println("Enter Query : ");
-		Scanner sc = new Scanner(System.in);
-		
-		//query validation
-		
-		//query parsing
-		String query = sc.nextLine();
+	public  void insertQuery(String query, String databaseName , String userName) throws IOException {
 		String[] queryArray = query.split(" ");
 		String tableName = queryArray[2];
-		if(checkFileExistence(tableName) == true) 
+		informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+		long startTime = System.nanoTime();
+		if(checkFileExistence(tableName,databaseName) == true) 
 			{
-				if(dataTypeValidation(query, tableName) == false)
+				if(dataTypeValidation(query, tableName,databaseName) == false)
 					{
+						informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY,"Error : DataType validation failed");
 						System.out.println("Error : DataType validation failed");
-						continue;
 					}
-				int indexOfPK=getIndexOfPrimaryKey(tableName);
-				String primaryKey = getPrimaryKey(tableName);
-				List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK);
+				int indexOfPK=getIndexOfPrimaryKey(tableName,databaseName);
+				String primaryKey = getPrimaryKey(tableName,databaseName);
+				List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK,databaseName);
 				if(checkDuplicatePrimaryKey(primaryKeysData,query,primaryKey) == true) {
 					
 				}
 				else {
-					System.out.println("ERROR : No duplicate primary key");
-					insertData(tableName,query);
+					insertData(tableName,query,databaseName);
 				}
 			}
 		else {
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exists , tablename :"+tableName);
 			System.out.println("ERROR : Table does not exists");
 		}
-		}
-		
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    LogWriterService.getInstance().write(informationMap);
 	}
 	
-	public static boolean checkFileExistence(String tableName) {
-		File tempFile = new File("bin/Databases/TestDatabase/"+tableName+".txt");
+	public  boolean checkFileExistence(String tableName , String databaseName) {
+		File tempFile = new File("bin/Databases/"+databaseName+"/"+tableName+".txt");
 		boolean exists = tempFile.exists();
 		return exists;
 	}
 	
-	public static String getPrimaryKey(String tableName) throws IOException {
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+	public  String getPrimaryKey(String tableName , String databaseName) throws IOException {
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
 	    String line;
@@ -84,14 +80,14 @@ public class insert {
 		    	if(line.startsWith("<~metadata~>primarykey"))
 		    	{
 		    		primaryKey = line.split("=")[1];
-		    		System.out.println("Primary Key of table : "+primaryKey);
 		    	}
 		    }
 		    return primaryKey;
 	}
-	public static Integer getIndexOfPrimaryKey(String tableName) throws IOException
+	
+	public  Integer getIndexOfPrimaryKey(String tableName , String databaseName) throws IOException
 	{
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
 	    String line;
@@ -111,9 +107,9 @@ public class insert {
 		return ColumnList.indexOf(primaryKey);
 	}
 
-	public static List<String> getAllPrimaryKeysData(String tableName,int indexOfPK) throws IOException
+	public  List<String> getAllPrimaryKeysData(String tableName,int indexOfPK ,String databaseName) throws IOException
 	{
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> primaryKeyData = new ArrayList<>();
 		String line;
@@ -127,7 +123,7 @@ public class insert {
 	    return primaryKeyData;
 	}
 	
-	public static boolean checkDuplicatePrimaryKey(List<String> primaryKeysData , String query , String primaryKey)
+	public  boolean checkDuplicatePrimaryKey(List<String> primaryKeysData , String query , String primaryKey)
 	{
         Pattern pattern = Pattern.compile("insert into\\s+(.*?)\\s+\\((.*?)\\)\\s+values\\s+\\((.*?)\\)");
         Matcher matcher = pattern.matcher(query);
@@ -145,6 +141,7 @@ public class insert {
         int primaryKeyIndex = collist.indexOf(primaryKey);
         if(primaryKeyIndex == -1)
         {
+        	informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Primary Key Column cant be empty , Primary Key :"+primaryKey);
         	System.out.println("ERROR : Primary Key Column cant be empty");
         	return true;
         }
@@ -165,7 +162,7 @@ public class insert {
         
 	}
 	
-	public static void insertData(String tableName, String query) throws IOException
+	public  void insertData(String tableName, String query ,String databaseName) throws IOException
 	{
         Pattern pattern = Pattern.compile("insert into\\s+(.*?)\\s+\\((.*?)\\)\\s+values\\s+\\((.*?)\\)");
         Matcher matcher = pattern.matcher(query);
@@ -186,7 +183,7 @@ public class insert {
         	columnRowsMap.put(columnName[i],values[i]);
         }
         
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
 	    String line;
@@ -203,8 +200,9 @@ public class insert {
 	    String newLine = System.getProperty("line.separator");
 	    for(int i=1;i<ColumnList.size();i++)
 	    {
-	    	insertString = insertString + "<~row~>"+columnRowsMap.get(ColumnList.get(i));
+	    	insertString = insertString + "<~row~>"+columnRowsMap.get(ColumnList.get(i));	
 	    }
+	    informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CHANGES_KEY, "Added row"+insertString);
 	    try(PrintWriter output = new PrintWriter(new FileWriter(tableLocation,true))) 
 	    {
 	    	output.write(newLine + insertString);
@@ -212,10 +210,10 @@ public class insert {
 	    catch (Exception e) {}
 	}
 	
-	public static boolean dataTypeValidation(String query , String tableName) throws IOException
+	public  boolean dataTypeValidation(String query , String tableName ,String databaseName) throws IOException
 	{
 		int validationFlag = 0;
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> dataTypeList = new ArrayList<>();
 		List<String> tableColumns = new ArrayList<>();

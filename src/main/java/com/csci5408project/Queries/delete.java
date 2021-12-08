@@ -1,5 +1,7 @@
 package com.csci5408project.Queries;
-
+//Author
+//Kandarp Parikh
+//B00873863
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,18 +19,18 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.csci5408project.log_management.LogWriterService;
+
 // delete from StudentTable where StudentName = Parth
 // delete from StudentTable where StudentID=2002
 // delete from table
 public class delete {
+	Map<String, String> informationMap = new HashMap<>();
 
-	public static void main(String[] args) throws IOException {
-		int flag = 0;
-		while(flag == 0)
-		{
-			System.out.println("Enter delete query :");
-			Scanner sc = new Scanner(System.in);
-			String query = sc.nextLine();
+	public  void deleteQuery(String query,String databaseName,String userName) throws IOException {
+		
+			informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+			long startTime = System.nanoTime();
 	        Pattern wherePattern = Pattern.compile("delete from\\s+(.*)\\s+where\\s+(.*)");
 	        Matcher matcher = wherePattern.matcher(query);
 	        
@@ -40,38 +42,42 @@ public class delete {
 	        
 	        if(query.split(" ").length<4)
 	        {
-	        	if(checkTableExistence(matcherWithoutWhere.group(1)) == false)
+	        	if(checkTableExistence(matcherWithoutWhere.group(1),databaseName) == false)
 				{
+	        		informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exist");
 					System.out.println("ERROR : Table does not exist");
-					break;
 				}
 	        	else
 	        	{
-	        		deleteAllContents(matcherWithoutWhere.group(1));
+	        		deleteAllContents(matcherWithoutWhere.group(1),databaseName);
 	        	}
 	        }
 	        else
 	        {
-				if(checkTableExistence(matcher.group(1)) == false)
+				if(checkTableExistence(matcher.group(1),databaseName) == false)
 				{
+					informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exist");
 					System.out.println("ERROR : Table does not exist");
-					break;
 				}
-				writeToFile(deleteRows(query, matcher.group(1)), matcher.group(1));
+				else
+				{
+				writeToFile(deleteRows(query, matcher.group(1),databaseName), matcher.group(1),databaseName);
+				}
 	        }
-		}
-
+		    long stopTime = System.nanoTime();
+		    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+		    LogWriterService.getInstance().write(informationMap);
 	}
 	
-	public static boolean checkTableExistence(String tableName) {
-		File tempFile = new File("bin/Databases/TestDatabase/"+ tableName+".txt");
+	public  boolean checkTableExistence(String tableName,String databaseName) {
+		File tempFile = new File("bin/Databases/"+databaseName+"/"+ tableName+".txt");
 		boolean exists = tempFile.exists();
 		return exists;
 	}
 	
-    public static Map deleteRows(String query , String tableName) throws IOException
+    public  Map deleteRows(String query , String tableName,String databaseName) throws IOException
     {
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		String line;
         Pattern pattern = Pattern.compile("delete from\\s+(.*)\\s+where\\s+(.*)");
@@ -117,8 +123,8 @@ public class delete {
 	    return tableData;
     }
 
-    public static void writeToFile (Map tableData , String tableName) throws IOException {
-    	Writer fileWriter = new FileWriter("bin/Databases/TestDatabase/"+tableName+".txt", false);
+    public  void writeToFile (Map tableData , String tableName,String databaseName) throws IOException {
+    	Writer fileWriter = new FileWriter("bin/Databases/"+databaseName+"/"+tableName+".txt", false);
     	String newLine = System.getProperty("line.separator");
 	    for (Object value : tableData.values()) {
 	    	fileWriter.write(value.toString() + newLine);
@@ -126,9 +132,9 @@ public class delete {
 	    fileWriter.flush();
     }
     
-    public static void deleteAllContents(String tableName) throws FileNotFoundException
+    public  void deleteAllContents(String tableName,String databaseName) throws FileNotFoundException
     {
-    	PrintWriter pw = new PrintWriter("bin/Databases/TestDatabase/"+tableName+".txt");
+    	PrintWriter pw = new PrintWriter("bin/Databases/"+databaseName+"/"+tableName+".txt");
     	pw.close();
     }
 }
