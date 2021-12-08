@@ -21,10 +21,10 @@ public final class UserRegistrationView {
     }
 
     public void performUserRegistration() {
-        printer.printContent("Enter username(Must be alphanumeric characters only)");
+        printer.printContent("Enter username(alphanumeric)");
         final String userName = scanner.nextLine();
 
-        printer.printContent("Enter email(Example: johndoe@gmail.com)");
+        printer.printContent("Enter email");
         final String email = scanner.nextLine();
 
         printer.printContent("Enter password (1 small letter, 1 capital letter, 1 special char, and 1 number and " +
