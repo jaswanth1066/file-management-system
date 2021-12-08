@@ -5,9 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public final class HashAlgorithmUtil {
+public final class securityAlgorithm {
 
-    public static String getSHA256Hash(final String source) throws NoSuchAlgorithmException {
+    public static String getHash(final String source) throws NoSuchAlgorithmException {
         if (source == null) {
             return null;
         }
@@ -15,8 +15,8 @@ public final class HashAlgorithmUtil {
         return String.format("%064x", new BigInteger(1, messageDigest.digest(source.getBytes(StandardCharsets.UTF_8))));
     }
 
-    public static boolean validateSHA256Hash(final String source, final String targetHash) throws NoSuchAlgorithmException {
-        final String sourceHash = getSHA256Hash(source);
+    public static boolean validateHash(final String source, final String targetHash) throws NoSuchAlgorithmException {
+        final String sourceHash = getHash(source);
         if (sourceHash == null || targetHash == null) {
             return false;
         }

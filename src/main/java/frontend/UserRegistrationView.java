@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import Backend.UserRegistrationController;
-import Exception.UserAuthenticationException;
+import Exception.AuthException;
 
 public final class UserRegistrationView {
     private final MainPrinter printer;
@@ -57,7 +57,7 @@ public final class UserRegistrationView {
             } else {
                 printer.printContent("User " + userName + " registration failed!");
             }
-        } catch (final UserAuthenticationException e) {
+        } catch (final AuthException e) {
             printer.printContent(e.toString());
         }
     }

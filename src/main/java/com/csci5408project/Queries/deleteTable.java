@@ -1,30 +1,32 @@
 package com.csci5408project.Queries;
 
+import Backend.SetDatabase;
+import com.csci5408project.log_management.LogWriterService;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class deleteTable {
-    public static void main(String[] args) throws IOException {
-        deleteTableQuery();
-    }
+    private static Map<String, String> informationMap = new HashMap<>();
 
-    public static void deleteTableQuery() throws IOException {
-        Scanner sc = new Scanner(System.in);
+    public void deleteTableQuery(String query,String dbName) throws IOException {
         int exitFlag = 0;
-        while (exitFlag == 0) {
-            System.out.println("Enter query");
-            String query = sc.nextLine();
-            if (parseDeleteTableQuery(query) == true) {
-                exitFlag = 1;
-            }
+        informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
 
+        if(parseDeleteTableQuery(query,dbName))
+        {
+            exitFlag = 1;
         }
+        LogWriterService.getInstance().write(informationMap);
+
     }
 
-    public static boolean parseDeleteTableQuery(String query){
+    public static boolean parseDeleteTableQuery(String query, String dbName){
 
         String deleteTable = query.toLowerCase();
         String trimmedQuery = deleteTable.trim().replaceAll(" +", " ");
@@ -33,9 +35,8 @@ public class deleteTable {
         final Matcher matcher = compile.matcher(trimmedQuery);
         boolean matchFound = matcher.find();
 
-        System.out.println("matchFound: " +matchFound );
         if(!matchFound){
-            System.out.println("ERROR OCCURED Query incorrect LINE 43");
+            System.out.println("error occurred Query incorrect");
             return false;
         }
 
@@ -51,9 +52,8 @@ public class deleteTable {
             return false;
         }
 
-        System.out.println("tableName: "+tableName);
 
-        File folder = new File("bin/Databases/TestDatabase/");
+        File folder = new File("bin/Databases/" + dbName);
         File[] listOfFiles = folder.listFiles();
         boolean flagFileExist = false;
         for (File file : listOfFiles) {
@@ -70,7 +70,8 @@ public class deleteTable {
         }
 
         try {
-            File file= new File("bin/Databases/TestDatabase/"+tableName+".txt");
+//            File file= new File("bin/Databases/TestDatabase/"+tableName+".txt");
+            File file= new File("bin/Databases/"+ dbName + "/" +tableName+".txt");
             if(file.delete()){
                 System.out.println("File deleted");
                 return true;

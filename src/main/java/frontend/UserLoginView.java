@@ -3,7 +3,7 @@ package frontend;
 import Backend.SecurityQuestion;
 import Backend.User;
 import Backend.UserLoginController;
-import Exception.UserAuthenticationException;
+import Exception.AuthException;
 import java.util.Scanner;
 
 public final class UserLoginView {
@@ -37,7 +37,7 @@ public final class UserLoginView {
                     userLoginController.loginUser(user, password, securityAnswer, randomSecurityQuestionIndex);
             printer.printContent("Logged in as: " + loggedInUser.getUserName());
             return loggedInUser;
-        } catch (final UserAuthenticationException e) {
+        } catch (final AuthException e) {
             printer.printContent(e.toString());
             return null;
         }

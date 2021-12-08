@@ -4,26 +4,26 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import Exception.UserAuthenticationException;
+import Exception.AuthException;
 
 public final class UserLoginController {
 
-    private void validateUserCredentials(final String user,
+    private void validateUser(final String user,
                                          final String password,
                                          final String securityAnswer)
-            throws UserAuthenticationException {
+            throws AuthException {
         final boolean isUserNameValid = ValidationUtil.isUserNameValid(user);
         final boolean isEmailValid = ValidationUtil.isEmailValid(user);
         if (!isUserNameValid && !isEmailValid) {
-            throw new UserAuthenticationException("Invalid credentials!");
+            throw new AuthException("Invalid credentials!");
         }
         final boolean isPasswordValid = ValidationUtil.isPasswordValid(password);
         if (!isPasswordValid) {
-            throw new UserAuthenticationException("Invalid credentials!");
+            throw new AuthException("Invalid credentials!");
         }
         final boolean isSecurityAnswerValid = ValidationUtil.isSecurityAnswerValid(securityAnswer);
         if (!isSecurityAnswerValid) {
-            throw new UserAuthenticationException("Invalid credentials!");
+            throw new AuthException("Invalid credentials!");
         }
     }
 
@@ -37,7 +37,7 @@ public final class UserLoginController {
         final boolean isSameUserName = userDetailsArr[1].equals(user);
         final boolean isSameEmail = userDetailsArr[2].equals(user);
         if (isSameUserName || isSameEmail) {
-            final boolean isSamePassword = HashAlgorithmUtil.validateSHA256Hash(password, userDetailsArr[3]);
+            final boolean isSamePassword = securityAlgorithm.validateHash(password, userDetailsArr[3]);
             if (isSamePassword) {
                 userExists = userDetailsArr[securityAnswerIndex].equals(securityAnswer);
             } else {
@@ -72,7 +72,7 @@ public final class UserLoginController {
                        final String password,
                        final String securityAnswer,
                        final int securityAnswerIndex)
-            throws UserAuthenticationException {
+            throws AuthException {
         try (final BufferedReader usersFileReader = new BufferedReader(new FileReader(Constant.USERS_FILE))) {
             String userDetails;
             while ((userDetails = usersFileReader.readLine()) != null) {
@@ -82,9 +82,9 @@ public final class UserLoginController {
                     return prepareUser(userDetailsArr);
                 }
             }
-            throw new UserAuthenticationException("Invalid credentials!");
+            throw new AuthException("Invalid credentials!");
         } catch (final IOException | NoSuchAlgorithmException e) {
-            throw new UserAuthenticationException("Something went wrong. Please try again after sometime!");
+            throw new AuthException("Something went wrong. Please try again after sometime!");
         }
     }
 
@@ -92,8 +92,8 @@ public final class UserLoginController {
                           final String password,
                           final String securityAnswer,
                           final int securityAnswerIndex)
-            throws UserAuthenticationException {
-        validateUserCredentials(user, password, securityAnswer);
+            throws AuthException {
+        validateUser(user, password, securityAnswer);
         final User loggedInUser = login(user, password, securityAnswer, securityAnswerIndex);
         BackendSession.setLoggedInUser(loggedInUser);
         return loggedInUser;
