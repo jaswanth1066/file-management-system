@@ -1,15 +1,13 @@
 <~tablename~>StudentTable
 <~metadata~>primarykey=StudentID
+<~metadata~>foreignkey=studentid1
+<~metadata~>foreignkey=studentid2
 <~colheader~>StudentName<~colheader~>StudentID<~colheader~>Course
-<~coldatatype~>String<~coldatatype~>int<~coldatatype~>String
-<~row~>Kandarp Parikh<~row~>123<~row~>Btech IT
+<~colDataType~>string<~colDataType~>int<~colDataType~>int
+<~row~>Kandarp<~row~>123<~row~>MEng
 <~row~>Harvik<~row~>456<~row~>Thesis
-<~row~>SmitPatel<~row~>789<~row~>Law
-<~row~>Jaswanth<~row~>873869<~row~>Database
+<~row~>smit<~row~>789<~row~>Macs
+<~row~>Kandarp<~row~>B00873868<~row~>data
+<~row~>Kandarp<~row~>B00873863<~row~>data
 <~row~>JamesBond<~row~>007<~row~>Licensetokill
-<~row~>SmitPatel<~row~>0909<~row~>data
-<~row~>Het<~row~>000235<~row~>Software
-<~row~>Parikh Kandarp<~row~>2002<~row~>data
-<~row~>Parikh<~row~>12345<~row~>data
-<~row~>HarshChanged<~row~>0001<~row~>data
-<~row~>daks<~row~>0003<~row~>SDC
+
