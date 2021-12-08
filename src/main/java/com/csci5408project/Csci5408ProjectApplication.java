@@ -16,7 +16,7 @@ import frontend.MainMenuView;
 
 @SpringBootApplication
 public class Csci5408ProjectApplication {
-	
+
 
 	private void userRegistration(final MainPrinter printer,
 								  final Scanner scanner) {
