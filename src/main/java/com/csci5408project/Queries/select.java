@@ -7,43 +7,43 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import com.csci5408project.log_management.LogWriterService;
 
 //Author
 //Kandarp Parikh
 //B00873863
 
 public class select {
-	public static void main(String[] args) throws IOException {
-		selectquery();	
-	}
+	
+	 Map<String, String> informationMap = new HashMap<>();
 	//select * from StudentTable
-	//select * from StudentTable where StudentName=Kandarp
-	//select StudentName,StudentID from StudentTable where StudentName=Kandarp
-	//select StudentID from StudentTable where StudentName=Kandarp
+	//select * from StudentTable where StudentName=KandarpModified
+	//select StudentName,StudentID from StudentTable where StudentName=KandarpModified
+	//select StudentID from StudentTable where StudentName=KandarpModified
 	//select StudentName from StudentTable where StudentID=123
 	//select StudentName,StudentID from StudentTable where StudentID=123
-	public static void selectquery() throws IOException {
-		Scanner sc = new Scanner(System.in);
+	public  void selectquery(String query, String databaseName , String userName) throws IOException {
+
 		int exitFlag = 0;
-		while(exitFlag == 0)
-		{
-	    System.out.println("Enter query");
-	    String query = sc.nextLine();
-	    if(parseSelectQuery(query) == true)
+		informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+		
+	    if(parseSelectQuery(query,databaseName) == true)
 	    {
 	    	exitFlag = 1;
 	    }
-
-		}
+	    LogWriterService.getInstance().write(informationMap);
 	}
-	public static boolean parseSelectQuery(String query) throws IOException {
+	public  boolean parseSelectQuery(String query,String databaseName) throws IOException {
 		//Select * from xyz where col="";
 		String[] queryArray = query.split(" ");
 		String[] columnHeaders = queryArray[1].split(",");
 		String tableName = queryArray[3];
-		String TableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String TableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		System.out.println(TableLocation);
 		try {
 		    BufferedReader br = new BufferedReader(new FileReader(TableLocation));
@@ -77,16 +77,19 @@ public class select {
 		}
 		
 	}
-	public static void executeSelectQuery(String query , String TableLocation) throws IOException
+	public  void executeSelectQuery(String query , String TableLocation) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(TableLocation));
 	    String line;
 		String[] queryArray = query.split(" ");
 		String[] columnHeaders = queryArray[1].split(",");
+		int databaseRecords = 0;
+		long startTime = System.nanoTime();
 	    if(columnHeaders[0].equalsIgnoreCase("*"))
 	    {
 		    while ((line = br.readLine()) != null) 
 		    {
+		    	databaseRecords +=1;
 			      if(line.startsWith("<~colheader~>") || line.startsWith("<~row~>"))
 			      {
 			    	  String splitter = "";
@@ -109,12 +112,14 @@ public class select {
 			    	  System.out.println();
 			      }
 			 }
+		    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 		 }
 	      else
 	      {
 	    	  List<Integer> indexOfColumns = new ArrayList<Integer>();
 	    	  String[] rows = {};
 	    	  while ((line = br.readLine()) != null) {
+	    		  databaseRecords +=1;
 			      if(line.startsWith("<~colheader~>"))
 			      {
 			    	  String[] Columns = line.split("<~colheader~>");
@@ -123,6 +128,7 @@ public class select {
 			    	  {
 			    		  if(!collist.contains(s))
 			    		  {
+			    			  informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "Table does not contain column: "+s);
 			    			  System.out.println("Table does not contain column: "+s);	
 			    			  break;
 			    		  }
@@ -147,20 +153,25 @@ public class select {
 			    	  
 			      } 
 	      }
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 	}
 	
-	public static void executeSelectWhereQuery(String query , String TableLocation,String conditionColumn ,String conditionValue) throws IOException
+	public  void executeSelectWhereQuery(String query , String TableLocation,String conditionColumn ,String conditionValue) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(TableLocation));
 	    String line;
 		String[] queryArray = query.split(" ");
 		String[] columnHeaders = queryArray[1].split(",");
-		System.out.println("Executing where query");
+		int databaseRecords = 0;
+		long startTime = System.nanoTime();
 	    if(columnHeaders[0].equalsIgnoreCase("*"))
 	    {	
 	    	List<String> columnList = new ArrayList<>();
 		    while ((line = br.readLine()) != null) 
 		    {	
+		    	  databaseRecords +=1;
 			      if(line.startsWith("<~colheader~>") || line.startsWith("<~row~>"))
 			      {
 			    	  String splitter = "";
@@ -207,12 +218,14 @@ public class select {
 			    	  }
 			      }
 			 }
+		    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 		 }
 	      else
 	      {
 	    	  List<Integer> indexOfColumns = new ArrayList<Integer>();
 	    	  String[] rows = {};
 	    	  while ((line = br.readLine()) != null) {
+	    		  databaseRecords +=1;
 			      if(line.startsWith("<~colheader~>"))
 			      {
 			    	  String[] Columns = line.split("<~colheader~>");
@@ -261,6 +274,9 @@ public class select {
 			      } 	  
 			      } 
 	      }
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 	}
 
 }

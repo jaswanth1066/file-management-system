@@ -14,5 +14,5 @@ public class IdentifyQuery {
 		}
 		return null;
 	}
-
 }
+

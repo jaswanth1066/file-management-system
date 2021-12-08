@@ -10,7 +10,8 @@ import frontend.Session;
 
 public class QueryLogWriter {
 
-	private String filePath = "/Users/jaswanth106/Desktop/QueryLogs.txt";
+//	private String filePath = "/Users/jaswanth106/Desktop/QueryLogs.txt";
+	private String filePath = "bin/Logs/QueryLogs.txt";
 
 	private File file;
 	private java.io.FileWriter fileWriter;
