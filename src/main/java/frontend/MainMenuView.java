@@ -34,7 +34,6 @@ public final class MainMenuView {
 			printer.printContent("2. Generate SQL Dump.");
 			printer.printContent("3. Generate ERD.");
 			printer.printContent("4. Logout.");
-			printer.printContent("5. Transaction.");
 			printer.printContent("Select an option:");
 			final String input = scanner.nextLine();
 			switch (input) {
@@ -63,9 +62,7 @@ public final class MainMenuView {
 						exitFlag = 1;
 						break;
 					}
-					String queryType = iq.identifyQuery(newQuery).toString();
-					System.out.println(queryType);
-					
+					String queryType = iq.identifyQuery(newQuery).toString();					
 					
 					if(queryType.equalsIgnoreCase("select"))
 					{
@@ -89,6 +86,7 @@ public final class MainMenuView {
 						com.csci5408project.Queries.delete delete = new com.csci5408project.Queries.delete();
 						delete.deleteQuery(newQuery, databaseName, userName);
 					}
+
 					if(queryType.equalsIgnoreCase("DROP_TABLE")){
 						System.out.println("Executing drop table");
 						deleteTable deleteTable = new deleteTable();
@@ -108,11 +106,6 @@ public final class MainMenuView {
 						createTable createTable = new createTable();
 						createTable.createTableQuery(newQuery,databaseName);
 					}
-					// check use database , database exists ?
-					
-					// 
-					ValidateQuery validate = new ValidateQuery();
-					//validate.getError(query , userSession.getLoggedInUser().toString())
 					}
 				}
 				else
@@ -131,7 +124,6 @@ public final class MainMenuView {
 			case "4":
 				userSession.destroyUserSession();
 				return;
-			case "5":
 			default:
 				break;
 			}

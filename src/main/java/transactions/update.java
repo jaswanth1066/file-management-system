@@ -2,7 +2,6 @@ package transactions;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,9 +15,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ch.qos.logback.classic.db.names.ColumnName;
+import com.csci5408project.log_management.*;
 
-
+//Author
+//Kandarp Parikh
+//B00873863
 
 public class update {
 	
@@ -36,53 +37,62 @@ public class update {
 // update StudentTable set StudentName=KandarpModified,StudentID=0982 where StudentName=parth
 // update StudentTable set StudentName=SmitPatel,StudentID=0982 where StudentName=smit
 // update StudentTable set StudentName=Smit,StudentID=789 where StudentName=smit - should throw error of primaryKey
-	public static Map<Integer, String> updateTransaction(String query,Map<Integer, String> tempTransactionFile) throws IOException {
+	
+	Map<String, String> informationMap = new HashMap<>();
+	public  Map<Integer, String> updateTransaction(String query,Map<Integer, String> tempTransactionFile, String databaseName , String tableName) throws IOException {
 
+		informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock applied on table : "+tableName);
+		long startTime = System.nanoTime();
 			System.out.println("Enter update query :");
 			Scanner sc = new Scanner(System.in);
 	        Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
 	        Matcher matcher = pattern.matcher(query);
 	        matcher.find();
-			if(checkTableExistence(query) == false)
+			if(checkTableExistence(query,databaseName) == false)
 			{
+				informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exist");
 				System.out.println("ERROR : Table does not exist");
 			}
 
-			if(primaryKeyColumnExistence(query,getPrimaryKey(query,tempTransactionFile)) == true)
+			if(primaryKeyColumnExistence(query,getPrimaryKey(query,tempTransactionFile,databaseName)) == true)
 			{
-				if(dataTypeValidation(query, matcher.group(1),tempTransactionFile) == false)
+				if(dataTypeValidation(query, matcher.group(1),tempTransactionFile,databaseName) == false)
 				{
+					informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "Error : DataType validation failed");
 					System.out.println("Error : DataType validation failed");
 				}
-				if(checkPrimaryKeyDuplicate(getAllPrimaryKeysData(matcher.group(1),getIndexOfPrimaryKey(matcher.group(1),tempTransactionFile),tempTransactionFile)
-						, query , getPrimaryKey(query,tempTransactionFile)) == true)
+				if(checkPrimaryKeyDuplicate(getAllPrimaryKeysData(matcher.group(1),getIndexOfPrimaryKey(matcher.group(1),tempTransactionFile,databaseName),tempTransactionFile,databaseName)
+						, query , getPrimaryKey(query,tempTransactionFile,databaseName)) == true)
 				{
+					informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Primary key value cant be duplicate");
 					System.out.println("ERROR : Primary key value cant be duplicate");
 				}
 				else
 				{
-					System.out.println("No duplicate primary key");
-					tempTransactionFile = updateRows(query, matcher.group(1),tempTransactionFile);
+					tempTransactionFile = updateRows(query, matcher.group(1),tempTransactionFile,databaseName);
 				}	
 			}
 			else
 			{
-				tempTransactionFile = updateRows(query, matcher.group(1),tempTransactionFile);
+				tempTransactionFile = updateRows(query, matcher.group(1),tempTransactionFile,databaseName);
 			}
+		    long stopTime = System.nanoTime();
+		    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(stopTime-startTime));
+		    LogWriterService.getInstance().write(informationMap);
 			return tempTransactionFile;
 		}
 
 	
-	public static boolean checkTableExistence(String query) {
+	public  boolean checkTableExistence(String query, String databaseName) {
         Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
         Matcher matcher = pattern.matcher(query);
         matcher.find();
-		File tempFile = new File("bin/Databases/TestDatabase/"+ matcher.group(1)+".txt");
+		File tempFile = new File("bin/Databases/"+databaseName+"/"+ matcher.group(1)+".txt");
 		boolean exists = tempFile.exists();
 		return exists;
 	}
 	
-	public static boolean primaryKeyColumnExistence(String query , String primaryKey) {
+	public  boolean primaryKeyColumnExistence(String query , String primaryKey) {
         Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
         Matcher matcher = pattern.matcher(query);
         matcher.find();
@@ -96,11 +106,11 @@ public class update {
 		return columnList.contains(primaryKey);
 	}
 	
-	public static String getPrimaryKey(String query,Map<Integer, String> tempTransactionFile) throws IOException {
+	public  String getPrimaryKey(String query,Map<Integer, String> tempTransactionFile, String databaseName) throws IOException {
         Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
         Matcher matcher = pattern.matcher(query);
         matcher.find();
-		String tableLocation = "bin/Databases/TestDatabase/"+matcher.group(1)+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+matcher.group(1)+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
 //	    String line;
@@ -117,9 +127,9 @@ public class update {
 		    return primaryKey;
 	}
 	
-	public static List<String> getAllPrimaryKeysData(String tableName,int indexOfPK,Map<Integer, String> tempTransactionFile) throws IOException
+	public  List<String> getAllPrimaryKeysData(String tableName,int indexOfPK,Map<Integer, String> tempTransactionFile, String databaseName) throws IOException
 	{
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> primaryKeyData = new ArrayList<>();
 		//String line;
@@ -134,9 +144,9 @@ public class update {
 	    return primaryKeyData;
 	}
 	
-	public static Integer getIndexOfPrimaryKey(String tableName ,Map<Integer, String> tempTransactionFile) throws IOException
+	public  Integer getIndexOfPrimaryKey(String tableName ,Map<Integer, String> tempTransactionFile, String databaseName) throws IOException
 	{
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> ColumnList = new ArrayList<>();
 	    //String line;
@@ -157,7 +167,7 @@ public class update {
 		return ColumnList.indexOf(primaryKey);
 	}
 	
-	public static boolean checkPrimaryKeyDuplicate(List<String> primaryKeyData, String query , String primaryKey)
+	public  boolean checkPrimaryKeyDuplicate(List<String> primaryKeyData, String query , String primaryKey)
 	{
         Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
         Matcher matcher = pattern.matcher(query);
@@ -184,8 +194,8 @@ public class update {
         }
 	}
 	
-    public static void writeToFile (Map tableData , String tableName) throws IOException {
-    	Writer fileWriter = new FileWriter("bin/Databases/TestDatabase/"+tableName+".txt", false);
+    public  void writeToFile (Map tableData , String tableName, String databaseName) throws IOException {
+    	Writer fileWriter = new FileWriter("bin/Databases/"+databaseName+"/"+tableName+".txt", false);
     	String newLine = System.getProperty("line.separator");
 	    for (Object value : tableData.values()) {
 	    	fileWriter.write(value.toString() + newLine);
@@ -193,9 +203,9 @@ public class update {
 	    fileWriter.flush();
     }
     
-    public static Map updateRows(String query , String tableName,Map<Integer, String> tempTransactionFile) throws IOException
+    public  Map updateRows(String query , String tableName,Map<Integer, String> tempTransactionFile, String databaseName) throws IOException
     {
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 //		String line;
         Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
@@ -267,10 +277,10 @@ public class update {
 	    return tableData;
     }
     
-	public static boolean dataTypeValidation(String query , String tableName ,Map<Integer, String> tempTransactionFile) throws IOException
+	public  boolean dataTypeValidation(String query , String tableName ,Map<Integer, String> tempTransactionFile, String databaseName) throws IOException
 	{
 		int validationFlag = 0;
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 		List<String> dataTypeList = new ArrayList<>();
 		List<String> tableColumns = new ArrayList<>();

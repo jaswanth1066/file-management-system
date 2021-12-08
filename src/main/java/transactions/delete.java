@@ -1,5 +1,7 @@
 package transactions;
-
+//Author
+//Kandarp Parikh
+//B00873863
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,13 +19,20 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.csci5408project.log_management.*;
+
+
+
 // delete from StudentTable where StudentName = Parth
 // delete from StudentTable where StudentID=2002
 // delete from table
 public class delete {
 
-	public static Map<Integer, String> deleteTransaction(String query,Map<Integer, String> tempTransactionFile) throws IOException {
+	Map<String, String> informationMap = new HashMap<>();
+	public  Map<Integer, String> deleteTransaction(String query,Map<Integer, String> tempTransactionFile , String databaseName , String tableName) throws IOException {
 
+		informationMap.put(LogWriterService.EVENT_LOG_TRANSACTIONS_KEY, "Lock applied on table : "+tableName);
+		long startTime = System.nanoTime();
 			Scanner sc = new Scanner(System.in);
 	        Pattern wherePattern = Pattern.compile("delete from\\s+(.*)\\s+where\\s+(.*)");
 	        Matcher matcher = wherePattern.matcher(query);
@@ -36,8 +45,9 @@ public class delete {
 	        
 	        if(query.split(" ").length<4)
 	        {
-	        	if(checkTableExistence(matcherWithoutWhere.group(1)) == false)
+	        	if(checkTableExistence(matcherWithoutWhere.group(1),databaseName) == false)
 				{
+	        		informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exist");
 					System.out.println("ERROR : Table does not exist");
 				}
 	        	else
@@ -47,24 +57,28 @@ public class delete {
 	        }
 	        else
 	        {
-				if(checkTableExistence(matcher.group(1)) == false)
+				if(checkTableExistence(matcher.group(1),databaseName) == false)
 				{
+					informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exist");
 					System.out.println("ERROR : Table does not exist");
 				}
-				tempTransactionFile = deleteRows(query, matcher.group(1),tempTransactionFile);
+				tempTransactionFile = deleteRows(query, matcher.group(1),tempTransactionFile,databaseName);
 	        }
+		    long stopTime = System.nanoTime();
+		    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(stopTime-startTime));
+		    LogWriterService.getInstance().write(informationMap);
 	        return tempTransactionFile;
 		}
 	
-	public static boolean checkTableExistence(String tableName) {
-		File tempFile = new File("bin/Databases/TestDatabase/"+ tableName+".txt");
+	public  boolean checkTableExistence(String tableName , String databaseName) {
+		File tempFile = new File("bin/Databases/"+databaseName+"/"+ tableName+".txt");
 		boolean exists = tempFile.exists();
 		return exists;
 	}
 	
-    public static Map deleteRows(String query , String tableName , Map<Integer, String> tempTransactionFile) throws IOException
+    public  Map deleteRows(String query , String tableName , Map<Integer, String> tempTransactionFile, String databaseName) throws IOException
     {
-		String tableLocation = "bin/Databases/TestDatabase/"+tableName+".txt";
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
 		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
 //		String line;
         Pattern pattern = Pattern.compile("delete from\\s+(.*)\\s+where\\s+(.*)");
@@ -107,12 +121,13 @@ public class delete {
 	    		}
 	    	}
 	    }
+	    informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CHANGES_KEY, "Rows affected : "+ rowsAffected);
 	    System.out.println("Rows affected : "+ rowsAffected);
 	    return tableData;
     }
 
-    public static void writeToFile (Map tableData , String tableName) throws IOException {
-    	Writer fileWriter = new FileWriter("bin/Databases/TestDatabase/"+tableName+".txt", false);
+    public  void writeToFile (Map tableData , String tableName , String databaseName) throws IOException {
+    	Writer fileWriter = new FileWriter("bin/Databases/"+databaseName+"/"+tableName+".txt", false);
     	String newLine = System.getProperty("line.separator");
 	    for (Object value : tableData.values()) {
 	    	fileWriter.write(value.toString() + newLine);
@@ -120,7 +135,7 @@ public class delete {
 	    fileWriter.flush();
     }
     
-    public static Map<Integer, String> deleteAllContents(String tableName , Map<Integer, String> tempTransactionFile) throws FileNotFoundException
+    public  Map<Integer, String> deleteAllContents(String tableName , Map<Integer, String> tempTransactionFile) throws FileNotFoundException
     {
     	Map<Integer, String> cleanedTable = new HashMap<>();
     	int linenumber =0;

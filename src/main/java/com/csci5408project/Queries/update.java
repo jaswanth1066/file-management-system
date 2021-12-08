@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.csci5408project.log_management.LogWriterService;
+import com.csci5408project.validation.ValidateQuery;
 
 import ch.qos.logback.classic.db.names.ColumnName;
 
@@ -35,16 +36,19 @@ public class update {
 // update StudentTable set StudentName = Kandarp,StudentID=123 where condition
 	
 // TYPES OF QUERIES TO TEST : 
-// update StudentTable set StudentName=KandarpModified,StudentID=0982 where StudentName=parth
-// update StudentTable set StudentName=SmitPatel,StudentID=0982 where StudentName=smit
-// update StudentTable set StudentName=Smit,StudentID=789 where StudentName=smit - should throw error of primaryKey
+// update StudentTable set StudentName=Kandarp,StudentID=0982 where StudentName=KandarpParikh
+// update StudentTable set StudentName=SmitPatel,StudentID=0909 where StudentName=Milap
+// update StudentTable set StudentName=HarvikPatel,StudentID=654 where StudentName=Harvik - should throw error of primaryKey
 	
 	 Map<String, String> informationMap = new HashMap<>();
 	 
 	public  void updateQuery(String query , String databaseName , String userName) throws IOException {
 
+		ValidateQuery myQuery = new ValidateQuery();
+		long startTime = System.nanoTime();
+		if(myQuery.getError(query) == null)
+			{
 			informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
-			long startTime = System.nanoTime();
 	        Pattern pattern = Pattern.compile("update\\s+(.*)\\s+set\\s+(.*)\\s+where\\s+(.*)");
 	        Matcher matcher = pattern.matcher(query);
 	        matcher.find();
@@ -78,9 +82,15 @@ public class update {
 			{
 				writeToFile(updateRows(query, matcher.group(1),databaseName), matcher.group(1),databaseName);
 			}
-		    long stopTime = System.nanoTime();
-		    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
-		    LogWriterService.getInstance().write(informationMap);
+		}
+		else
+		{
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, myQuery.getError(query));
+			System.out.println(myQuery.getError(query));
+		}
+	    long stopTime = System.nanoTime();
+	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
+	    LogWriterService.getInstance().write(informationMap);
 	}
 	
 	public  boolean checkTableExistence(String query,String databaseName) {
