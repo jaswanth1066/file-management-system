@@ -12,7 +12,7 @@ import frontend.Session;
 public class QueryLogWriter {
 
 //	private String filePath = "/Users/jaswanth106/Desktop/QueryLogs.txt";
-	public static final String filePath = "bin/Logs/QueryLogs.txt";
+	public static final String filePath = "/Users/jaswanth106/git/csci5408-project-g8/QueryLogs.txt";
 
 	private File file;
 	private java.io.FileWriter fileWriter;

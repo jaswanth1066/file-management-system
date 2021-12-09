@@ -12,7 +12,7 @@ import frontend.Session;
 public class GeneralLogWriter {
 
 //	private String filePath = "/Users/jaswanth106/Desktop/GeneralLogs.txt";
-	public static final String filePath = "bin/Logs/GeneralLogs.txt";
+	public static final String filePath = "/Users/jaswanth106/git/csci5408-project-g8/GeneralLogs.txt";
 
 	private File file;
 	private java.io.FileWriter fileWriter;
@@ -50,7 +50,7 @@ public class GeneralLogWriter {
 			sb.append("<").append(SetDatabase.getInstance().getDb()).append(">-");
 			// sb.append("<").append("Jaswanth").append(">-");
 			sb.append("<").append("Time taken for query to extecute is : ")
-					.append(information.get(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY)).append(". Database state is: ")
+					.append(information.get(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY)).append("ms. Database state is: ")
 					.append(information.get(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY)).append(">");
 			this.bufferedWriter.newLine();
 			this.bufferedWriter.append(sb.toString());

@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.csci5408project.log_management.EventLogWriter;
+import com.csci5408project.log_management.GeneralLogWriter;
+import com.csci5408project.log_management.QueryLogWriter;
 
 public class Analyze {
 
@@ -18,7 +20,7 @@ public class Analyze {
 	private List<String> users = new ArrayList<String>();
 	private List<String> queryTypes = new ArrayList<String>();
 
-	public static final String FILE_PATH = "bin/Logs/Analysis.txt";
+	public static final String FILE_PATH = "/Users/jaswanth106/git/csci5408-project-g8/Analysis.txt";
 
 	private void detectDatabase(String subQuery) {
 		databases.addAll(Arrays.asList(subQuery.split(",")));
@@ -40,7 +42,7 @@ public class Analyze {
 				detectDatabase(subQueries[i + 1]);
 				i = i + 2;
 				continue;
-			} else if (subQueries[i].equalsIgnoreCase("users")) {
+			} else if (subQueries[i].equalsIgnoreCase("user")) {
 				detectUsers(subQueries[i + 1]);
 				i = i + 2;
 				continue;
@@ -51,40 +53,54 @@ public class Analyze {
 			}
 			i++;
 		}
-		return getAnalyzedLogs();
+		return getAnalyzedLogs(query);
 	}
 
-	private String getAnalyzedLogs() {
+	private String getAnalyzedLogs(String query) {
 		try {
 			StringBuffer stringBuffer = new StringBuffer();
-			String[] file = { EventLogWriter.filePath, EventLogWriter.filePath, EventLogWriter.filePath };
+			String[] file = { QueryLogWriter.filePath };
+			int noOfLines = 0;
 			for (String fileName : file) {
 				BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
 				String line;
 				while ((line = bufferedReader.readLine()) != null) {
+					if (line.isBlank()) {
+						continue;
+					}
+					String[] partsOfLog = line.substring(1, line.length() - 2).split(">-<");
+					boolean hasDatabaseInQuery = databases.isEmpty();
+					boolean hasUserInQuery = users.isEmpty();
+					boolean hasQueryTypeInQuery = queryTypes.isEmpty();
 					for (String database : databases) {
-						if (line.contains("<" + database + ">")) {
-							stringBuffer.append(line).append(System.lineSeparator());
+						if (partsOfLog[2].contains(database)) {
+							hasDatabaseInQuery = true;
 						}
 					}
 					for (String queryType : queryTypes) {
-						if (line.contains("<" + queryType + ">")) {
-							stringBuffer.append(line).append(System.lineSeparator());
+						if (partsOfLog[3].contains(queryType)) {
+							hasQueryTypeInQuery = true;
 						}
 					}
 					for (String user : users) {
-						if (line.contains("<" + user + ">")) {
-							stringBuffer.append(line).append(System.lineSeparator());
+						if (partsOfLog[1].contains(user)) {
+							hasUserInQuery = true;
 						}
+					}
+					if (hasDatabaseInQuery && hasUserInQuery && hasQueryTypeInQuery) {
+						stringBuffer.append(line).append(System.lineSeparator());
+						noOfLines++;
 					}
 				}
 				bufferedReader.close();
 			}
 			if (users.isEmpty() && databases.isEmpty() && queryTypes.isEmpty()) {
-				return "The query should contain user, database or query_type as keyword";
+				return "The query should contain user, database or query as keyword";
 			}
-			writeToFile(stringBuffer.toString());
-			return stringBuffer.toString();
+			writeToFile("Found : " + noOfLines + " results for your analysis with input : " + query
+					+ System.lineSeparator() + stringBuffer.toString());
+			return "Found : " + noOfLines + " results for your analysis with input : " + query + System.lineSeparator()
+					+ "The details and precise info can be found in the file :" + FILE_PATH;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -105,6 +121,11 @@ public class Analyze {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void main(String[] args) {
+		Analyze analyze = new Analyze();
+		System.out.println(analyze.analyze("users Jaswanth database NEW_DATABASE"));
 	}
 
 }

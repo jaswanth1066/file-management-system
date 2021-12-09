@@ -1,5 +1,6 @@
 package com.csci5408project.log_management;
 
+import java.util.Calendar;
 import java.util.Map;
 
 public class LogWriterService {
@@ -54,4 +55,9 @@ public class LogWriterService {
 		EventLogWriter.getInstance().stop();
 		QueryLogWriter.getInstance().stop();
 	}
+	
+	public static void main(String[] args) {
+		
+		System.out.println(Calendar.getInstance().getTime());
+	} 
 }

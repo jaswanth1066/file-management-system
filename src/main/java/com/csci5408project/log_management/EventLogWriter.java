@@ -12,7 +12,7 @@ import frontend.Session;
 public class EventLogWriter {
 
 //	private String filePath = "/Users/jaswanth106/Desktop/GeneralLogs.txt";
-	public static final String filePath = "bin/Logs/EventsLogs.txt";
+	public static final String filePath = "/Users/jaswanth106/git/csci5408-project-g8/GeneralLogs.txt";
 
 
 	private File file;

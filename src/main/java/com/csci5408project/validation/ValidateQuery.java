@@ -20,7 +20,7 @@ public class ValidateQuery {
 	public String getError(String query) {
 		query = query.toLowerCase();
 		String queryType = this.identifyQuery.identifyQuery(query);
-		if (queryType == null) {
+		if (queryType == null || queryType.isBlank()) {
 			return "Query should start with Create table, create database, Select, Insert, Update, Delete, drop or use database keywords.";
 		}
 		String error = null;
@@ -152,10 +152,10 @@ public class ValidateQuery {
 		return null;
 	}
 
-//	public static void main(String[] args) {
-//		ValidateQuery validate = new ValidateQuery();
-//		System.out.println(validate.getError("djhgsjdkhvbhjdbvj"));
-//		System.out.println(validate.getError("delete from table_name"));
-//	}
+	public static void main(String[] args) {
+		ValidateQuery validate = new ValidateQuery();
+		System.out.println(validate.getError("djhgsjdkhvbhjdbvj"));
+		System.out.println(validate.getError("delete from table_name"));
+	}
 
 }
