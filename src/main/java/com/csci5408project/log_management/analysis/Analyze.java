@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.csci5408project.log_management.EventLogWriter;
@@ -16,19 +17,19 @@ public class Analyze {
 	private List<String> databases = new ArrayList<String>();
 	private List<String> users = new ArrayList<String>();
 	private List<String> queryTypes = new ArrayList<String>();
-	
-	public static final String FILE_PATH = "bin/Logs/Analysis.txt"; 
+
+	public static final String FILE_PATH = "bin/Logs/Analysis.txt";
 
 	private void detectDatabase(String subQuery) {
-		databases.add(subQuery);
+		databases.addAll(Arrays.asList(subQuery.split(",")));
 	}
 
 	private void detectUsers(String subQuery) {
-		users.add(subQuery);
+		users.addAll(Arrays.asList(subQuery.split(",")));
 	}
 
 	private void detectQueryType(String subQuery) {
-		queryTypes.add(subQuery);
+		queryTypes.addAll(Arrays.asList(subQuery.split(",")));
 	}
 
 	public String analyze(String query) {
@@ -77,6 +78,10 @@ public class Analyze {
 						}
 					}
 				}
+				bufferedReader.close();
+			}
+			if (users.isEmpty() && databases.isEmpty() && queryTypes.isEmpty()) {
+				return "The query should contain user, database or query_type as keyword";
 			}
 			writeToFile(stringBuffer.toString());
 			return stringBuffer.toString();
@@ -99,8 +104,7 @@ public class Analyze {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 }
