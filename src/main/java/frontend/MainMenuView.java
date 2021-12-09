@@ -6,8 +6,9 @@ import java.nio.file.Paths;
 //Author: @Smit_Thakkar
 import java.util.Scanner;
 
-import com.csci5408project.Queries.insert;
-import com.csci5408project.Queries.select;
+import com.csci5408project.Erd;
+import com.csci5408project.Queries.*;
+import com.csci5408project.SqlDump;
 import com.csci5408project.validation.IdentifyQuery;
 import com.csci5408project.validation.ValidateQuery;
 
@@ -32,11 +33,7 @@ public final class MainMenuView {
 			printer.printContent("1. Execute SQL Query.");
 			printer.printContent("2. Generate SQL Dump.");
 			printer.printContent("3. Generate ERD.");
-			printer.printContent("4. Generate Data Dictionary.");
-			printer.printContent("5. View Meta Data.");
-			printer.printContent("6. Import SQL Dump.");
-			printer.printContent("7. Logout.");
-			printer.printContent("8. Transaction.");
+			printer.printContent("4. Logout.");
 			printer.printContent("Select an option:");
 			final String input = scanner.nextLine();
 			switch (input) {
@@ -65,9 +62,7 @@ public final class MainMenuView {
 						exitFlag = 1;
 						break;
 					}
-					String queryType = iq.identifyQuery(newQuery).toString();
-					System.out.println(queryType);
-					
+					String queryType = iq.identifyQuery(newQuery).toString();					
 					
 					if(queryType.equalsIgnoreCase("select"))
 					{
@@ -86,18 +81,31 @@ public final class MainMenuView {
 						com.csci5408project.Queries.update update = new com.csci5408project.Queries.update();
 						update.updateQuery(newQuery, databaseName, userName);
 					}
-					
 					if(queryType.equalsIgnoreCase("delete"))
 					{
 						com.csci5408project.Queries.delete delete = new com.csci5408project.Queries.delete();
 						delete.deleteQuery(newQuery, databaseName, userName);
 					}
-					
-					// check use database , database exists ?
-					
-					// 
-					ValidateQuery validate = new ValidateQuery();
-					//validate.getError(query , userSession.getLoggedInUser().toString())
+
+					if(queryType.equalsIgnoreCase("DROP_TABLE")){
+						System.out.println("Executing drop table");
+						deleteTable deleteTable = new deleteTable();
+						deleteTable.deleteTableQuery(newQuery,databaseName);
+
+					}
+					if(queryType.equalsIgnoreCase("DROP_DATABASE")){
+						System.out.println("Executing drop database");
+						deleteDatabase deleteDatabase = new deleteDatabase();
+						deleteDatabase.deleteDatabaseQuery(newQuery,databaseName);
+					}
+					if(queryType.equalsIgnoreCase("CREATE_DATABASE")){
+						createDatabase createDatabase = new createDatabase();
+						createDatabase.createDatabaseQuery(newQuery,databaseName);
+					}
+					if(queryType.equalsIgnoreCase("CREATE_TABLE")){
+						createTable createTable = new createTable();
+						createTable.createTableQuery(newQuery,databaseName);
+					}
 					}
 				}
 				else
@@ -106,24 +114,16 @@ public final class MainMenuView {
 				}
 				break;
 			case "2":
-
+				SqlDump sqlDump = new SqlDump();
+				sqlDump.generateSqlDump();
 				break;
 			case "3":
-
+				Erd erd = new Erd();
+				erd.generateErd();
 				break;
 			case "4":
-
-				break;
-			case "5":
-
-				break;
-			case "6":
-
-				break;
-			case "7":
 				userSession.destroyUserSession();
 				return;
-			case "8":
 			default:
 				break;
 			}

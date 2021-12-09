@@ -3,5 +3,5 @@ package Backend;
 public final class Constant {
 
     public static final String USERS_FILE =
-            "./src/main/java/database/user/user.txt";
+            "./src/main/java/files/user/user.txt";
 }

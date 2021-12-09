@@ -1,5 +1,0 @@
-
-<Tue Dec 07 19:33:22 AST 2021>-<kandarp>-<Executed Query is : select * from StudentTable>
-<Tue Dec 07 20:10:05 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Honey,B00873863,data)>
-<Tue Dec 07 20:10:21 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,2010,data)>
-<Tue Dec 07 20:26:18 AST 2021>-<kandarp>-<Executed Query is : insert into StudentTable (StudentName,StudentID) values (Parikh,1997)>

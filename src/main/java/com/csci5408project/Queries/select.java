@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.csci5408project.log_management.LogWriterService;
+import com.csci5408project.validation.ValidateQuery;
 
 //Author
 //Kandarp Parikh
@@ -22,31 +23,45 @@ public class select {
 	
 	 Map<String, String> informationMap = new HashMap<>();
 	//select * from StudentTable
-	//select * from StudentTable where StudentName=KandarpModified
-	//select StudentName,StudentID from StudentTable where StudentName=KandarpModified
-	//select StudentID from StudentTable where StudentName=KandarpModified
+	//select * from StudentTable where StudentName=KandarpParikh
+	//select StudentName,StudentID from StudentTable where StudentName=parikh
+	//select StudentID from StudentTable where StudentName=parikh
 	//select StudentName from StudentTable where StudentID=123
-	//select StudentName,StudentID from StudentTable where StudentID=123
+	//select StudentName,StudentID from StudentTable where StudentID=456
 	public  void selectquery(String query, String databaseName , String userName) throws IOException {
 
-		int exitFlag = 0;
-		informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
-		
-	    if(parseSelectQuery(query,databaseName) == true)
-	    {
-	    	exitFlag = 1;
-	    }
-	    LogWriterService.getInstance().write(informationMap);
+		ValidateQuery myQuery = new ValidateQuery();
+		if(myQuery.getError(query) == null)
+		{
+			int exitFlag = 0;
+			informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+			
+		    if(parseSelectQuery(query,databaseName) == true)
+		    {
+		    	exitFlag = 1;
+		    }
+		    
+		}
+		else
+		{
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, myQuery.getError(query));
+			System.out.println(myQuery.getError(query));
+		}
+		LogWriterService.getInstance().write(informationMap);
+
 	}
+	
+	//Query parsing
 	public  boolean parseSelectQuery(String query,String databaseName) throws IOException {
 		//Select * from xyz where col="";
 		String[] queryArray = query.split(" ");
 		String[] columnHeaders = queryArray[1].split(",");
 		String tableName = queryArray[3];
 		String TableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
-		System.out.println(TableLocation);
 		try {
 		    BufferedReader br = new BufferedReader(new FileReader(TableLocation));
+		    
+		    //if the query contains where clause
 			if(queryArray.length > 4)
 			{
 				String condition = queryArray[5];
@@ -77,6 +92,8 @@ public class select {
 		}
 		
 	}
+	
+	// method to execute normal select  query without where clause
 	public  void executeSelectQuery(String query , String TableLocation) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(TableLocation));
@@ -85,6 +102,8 @@ public class select {
 		String[] columnHeaders = queryArray[1].split(",");
 		int databaseRecords = 0;
 		long startTime = System.nanoTime();
+		
+		// if query contains *
 	    if(columnHeaders[0].equalsIgnoreCase("*"))
 	    {
 		    while ((line = br.readLine()) != null) 
@@ -114,6 +133,8 @@ public class select {
 			 }
 		    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 		 }
+	    
+	    //if query does not have *
 	      else
 	      {
 	    	  List<Integer> indexOfColumns = new ArrayList<Integer>();
@@ -158,6 +179,7 @@ public class select {
 	    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 	}
 	
+	// method to execute if the query contains where clause 
 	public  void executeSelectWhereQuery(String query , String TableLocation,String conditionColumn ,String conditionValue) throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(TableLocation));
@@ -166,6 +188,7 @@ public class select {
 		String[] columnHeaders = queryArray[1].split(",");
 		int databaseRecords = 0;
 		long startTime = System.nanoTime();
+		 // if the query contains *
 	    if(columnHeaders[0].equalsIgnoreCase("*"))
 	    {	
 	    	List<String> columnList = new ArrayList<>();
@@ -190,7 +213,8 @@ public class select {
 			    	  if(splitter == "<~colheader~>")
 			    	  {
 			    		  columnList = Arrays.asList(contents);
-			    		  System.out.println(columnList);
+			    		  
+			    		  //print columns headers in table format
 			    	  for(String data : contents)
 				    	  {
 				    		  java.util.Formatter formatter = new java.util.Formatter();
@@ -200,10 +224,8 @@ public class select {
 			    	  System.out.println();
 			    	  }
 			    	  else {
-//			    		  //System.out.println(columnList);
-//			    		  //System.out.println(columnList.indexOf(conditionColumn));
-//			    		  System.out.println(conditionValue);
-//			    		  System.out.println(list.get(columnList.indexOf(conditionColumn)));
+
+			    		  //if the constraints of where clause match , print the row
 				    	  if(list.get(columnList.indexOf(conditionColumn)).equals(conditionValue))
 				    	  {
 			    			  for(int j=0;j<list.size();j++)
@@ -220,6 +242,8 @@ public class select {
 			 }
 		    informationMap.put(LogWriterService.GENRAL_LOG_DATABASE_STATE_KEY, "Current records :"+databaseRecords);
 		 }
+	    
+	    // if the query does not contain *
 	      else
 	      {
 	    	  List<Integer> indexOfColumns = new ArrayList<Integer>();
@@ -232,11 +256,15 @@ public class select {
 			    	  List<String> collist = Arrays.asList(Columns);
 			    	  for(String str : columnHeaders)
 			    	  {
+			    		  // throw error if no such column exists in database
 			    		  if(!collist.contains(str))
 			    		  {
+			    			  informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "Table does not contain column: "+str);
 			    			  System.out.println("Table does not contain column: "+str);	
 			    			  break;
 			    		  }
+			    		  
+			    		  // print the column headers
 			    		  else
 			    		  {
 				    		  indexOfColumns.add(collist.indexOf(str));
@@ -255,11 +283,13 @@ public class select {
 //			    	  System.out.println(row);
 //			    	  System.out.println(indexOfColumns);
 			    	  List<String> TempRow = new ArrayList<>();
+			    	  
+			    	  // find the appropriate index of column and add it to row array in the relative index
 			    	  for(int i =0 ; i<indexOfColumns.size();i++)
 			    	  {
 			    		  TempRow.add(row[indexOfColumns.get(i)]);
 			    	  }
-//			    	  System.out.println(TempRow);
+			    	  // if the condition value is present in the array , print the row
 			    	  if(tmp.contains(conditionValue))
 			    	  {
 			    		  //System.out.println(TempRow.get(0) + TempRow.get(1));

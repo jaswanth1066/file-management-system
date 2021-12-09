@@ -17,46 +17,65 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.csci5408project.log_management.LogWriterService;
+import com.csci5408project.validation.ValidateQuery;
 // Author
 // Kandarp Parikh
 // B00873863
 public class insert {
 	 Map<String, String> informationMap = new HashMap<>();
 	//Check the existence of table
-	// Get metadata
+	//Get metadata
 	//Get primary key column
 	//Get all the primary keys
 	//check if the data contains duplicate primary key
+	// if no constraints are violated then insert the row in the database
 	
 	//INSERT INTO table_name (column1, column2, column3, ...)
 	//VALUES (value1, value2, value3, ...);
 	
-	//insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)
+	 // insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)
+	 // insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,B00873863,data)
+	 // insert into StudentTable (StudentName,StudentID,Course) values (Kandarp,9999,data)
+	 // insert into StudentTable (StudentName,StudentID,address) values (Kandarp,9999,data)
+	 // insert into StudentTable (StudentName,Course) values (Kandarp, 8989 ,data)
+	 // insert into StudentTable (StudentName,StudentID,StudentID,StudentID) values (Kandarp,9999,data,1234)
 	public  void insertQuery(String query, String databaseName , String userName) throws IOException {
-		String[] queryArray = query.split(" ");
-		String tableName = queryArray[2];
-		informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+		
 		long startTime = System.nanoTime();
-		if(checkFileExistence(tableName,databaseName) == true) 
+		ValidateQuery myQuery = new ValidateQuery();
+		if(myQuery.getError(query) == null)
 			{
-				if(dataTypeValidation(query, tableName,databaseName) == false)
+			String[] queryArray = query.split(" ");
+			String tableName = queryArray[2];
+			informationMap.put(LogWriterService.QUERY_LOG_EXECUTED_QUERY_KEY, query);
+			if(checkFileExistence(tableName,databaseName) == true && checkColumnExistence(query, databaseName, tableName) == true) 
+				{
+					if(dataTypeValidation(query, tableName,databaseName) == false)
+						{
+							informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY,"Error : DataType validation failed");
+							System.out.println("Error : DataType validation failed");
+						}
+					else
 					{
-						informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY,"Error : DataType validation failed");
-						System.out.println("Error : DataType validation failed");
+						int indexOfPK=getIndexOfPrimaryKey(tableName,databaseName);
+						String primaryKey = getPrimaryKey(tableName,databaseName);
+						List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK,databaseName);
+						if(checkDuplicatePrimaryKey(primaryKeysData,query,primaryKey) == true) {
+							
+						}
+						else {
+							insertData(tableName,query,databaseName);
+						}
 					}
-				int indexOfPK=getIndexOfPrimaryKey(tableName,databaseName);
-				String primaryKey = getPrimaryKey(tableName,databaseName);
-				List<String> primaryKeysData = getAllPrimaryKeysData(tableName,indexOfPK,databaseName);
-				if(checkDuplicatePrimaryKey(primaryKeysData,query,primaryKey) == true) {
-					
 				}
-				else {
-					insertData(tableName,query,databaseName);
-				}
+			else 
+			{
+
 			}
+		}
 		else {
-			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exists , tablename :"+tableName);
-			System.out.println("ERROR : Table does not exists");
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, myQuery.getError(query));
+			System.out.println(myQuery.getError(query));
 		}
 	    long stopTime = System.nanoTime();
 	    informationMap.put(LogWriterService.GENRAL_LOG_QUERY_EXECUTION_TIME_KEY , ""+(startTime-stopTime));
@@ -66,6 +85,12 @@ public class insert {
 	public  boolean checkFileExistence(String tableName , String databaseName) {
 		File tempFile = new File("bin/Databases/"+databaseName+"/"+tableName+".txt");
 		boolean exists = tempFile.exists();
+		if(exists == false)
+		{
+			informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Table does not exists , tablename :"+tableName);
+			System.out.println("ERROR : Table does not exists");
+		}
+		
 		return exists;
 	}
 	
@@ -147,12 +172,14 @@ public class insert {
         }
         if(columnName.length != values.length)
         {
+        	informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Number of column names specified should match the number of values in the query");    	
         	System.out.println("ERROR : Number of column names specified should match the number of values in the query");
         	return true;
         }
         List<String> insertValues = Arrays.asList(values);
         if(primaryKeysData.contains(insertValues.get(primaryKeyIndex)))
         {
+        	informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "ERROR : Duplicate Primary Key");    	
         	System.out.println("ERROR : Duplicate Primary Key");
         	return true;
         }
@@ -257,5 +284,50 @@ public class insert {
 	    {
 	    	return true;
 	    }
+	}
+	
+	public boolean checkColumnExistence(String query , String databaseName , String tableName) throws IOException
+	{
+        Pattern pattern = Pattern.compile("insert into\\s+(.*?)\\s+\\((.*?)\\)\\s+values\\s+\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(query);
+        matcher.find();
+     
+        String[] columnName = matcher.group(2)
+                .replaceAll("\\s+", "")
+                .split(",");
+        List<String> collist = Arrays.asList(columnName);
+        
+		String tableLocation = "bin/Databases/"+databaseName+"/"+tableName+".txt";
+		BufferedReader br = new BufferedReader(new FileReader(tableLocation));
+		List<String> ColumnList = new ArrayList<>();
+	    String line;
+	    while ((line = br.readLine()) != null) 
+	    {
+	    	if(line.startsWith("<~colheader~>"))
+	    	{
+	    		String[] columnArray = line.split("<~colheader~>");
+	    		ColumnList = Arrays.asList(columnArray);
+	    	}
+	    }
+	    
+    	if(ColumnList.size() > collist.size())
+    	{
+    	    for(int i=0; i<collist.size();i++)
+    	    {
+		    	if(ColumnList.contains(collist.get(i)) == false)
+				{
+		    		informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "entered column value :"+collist.get(i)+" does not exist in table "+ tableName);
+		    		System.out.println("entered column value :"+collist.get(i)+" does not exist in table "+ tableName);
+	    			return false;
+				}
+    	    }
+    	    return true;
+    	}
+    	else
+    	{
+    		informationMap.put(LogWriterService.EVENT_LOG_DATABASE_CRASH_KEY, "Entered number of columns are greater than number of columns in table");
+    		System.out.println("Entered number of columns are greater than number of columns in table");
+    		return false;
+    	}      
 	}
 }
